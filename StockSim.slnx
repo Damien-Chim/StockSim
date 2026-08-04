@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="StockSim.vcxproj" Id="cda0882a-87a9-4681-b58a-0d42b0b62ca8" />
+</Solution>
