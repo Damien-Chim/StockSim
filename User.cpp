@@ -9,54 +9,61 @@
 #include "Exchange.hpp"
 
 
-User::User(std::string user_id, std::string username, long long cash) :
-	user_id{ user_id }, username{ username }, cash{ cash } {
-
+User::User(std::string user_id, std::string username, long long available_cash) :
+	user_id{ user_id }, username{ username }, available_cash{ available_cash }, reserved_cash{ 0 } {
 }
 
-//bool User::write_to_owned_stocks(Stock stock, int quantity) {
-//	auto it = owned_stocks.find(stock);
-//	if (it == owned_stocks.end()) {
-//		owned_stocks[stock] = quantity;
-//	}
-//
-//	else {
-//		it->second += quantity;
-//	}
-//
-//	return true;
-//}
+const std::string& User::get_user_id() const {
+	return user_id;
+}
 
-//bool User::add_stock(Stock stock, int quantity) {
-//	return write_to_owned_stocks(stock, quantity);
-//}
-//
-//bool User::add_stock(std::vector<std::pair<Stock, int>> stocks) {
-//	for (auto [stock, quantity] : stocks) {
-//		if (User::write_to_owned_stocks(stock, quantity) == false) { return false; }
-//	}
-//	return true;
-//}
+const std::string& User::get_username() const {
+	return username;
+}
+
+long long User::get_available_cash() const {
+	return available_cash;
+}
+
+long long User::get_reserved_cash() const {
+	return reserved_cash;
+}
+
+const std::unordered_map<std::string, int>& User::get_owned_stocks() const {
+	return owned_stocks;
+}
 
 bool User::deposit_cash(long long amount) {
 	if (amount < 0) { return false; }
-	cash += amount;
+	available_cash += amount;
 	return true;
 }
 
-bool User::buy_stock(std::string stock_id, int quantity, int limit_price) {
+bool User::buy_stock(const std::string& stock_id, int quantity, int limit_price) {
 	if (quantity < 0 || limit_price < 0) { return false; }
-	if (quantity * limit_price > cash) { return false; }
-	// Order order("temporary_order_id", this->user_id, stock_id, Side::BUY, quantity, limit_price);
-	Exchange::buy_request(this->user_id, stock_id, quantity, limit_price);
-	return true;
+	if (quantity * limit_price > available_cash) { return false; }
+	long long locked = quantity * limit_price;
+	reserved_cash += locked;
+	available_cash -= locked;
+	return Exchange::buy_request(user_id, stock_id, quantity, limit_price);
 }
 
-bool User::sell_stock(std::string stock_id, int quantity, int limit_price) {
+bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price) const {
 	if (quantity < 0 || limit_price < 0) { return false; }
 	auto stock_it = owned_stocks.find(stock_id);
 	if (stock_it == owned_stocks.end()) { return false; }
 	if (quantity > stock_it->second) { return false; }
-	Exchange::sell_request(this->user_id, stock_id, quantity, limit_price);
-	return true;
+	return Exchange::sell_request(user_id, stock_id, quantity, limit_price);
+}
+
+void User::set_available_cash(int new_cash_balance) {
+	available_cash = new_cash_balance;
+}
+
+void User::set_reserved_cash(int new_reserved_cash) {
+	reserved_cash = new_reserved_cash;
+}
+
+void User::add_owned_stock(const std::string& stock_id, int quantity) {
+	owned_stocks[stock_id] += quantity;
 }

@@ -9,23 +9,35 @@ class User {
 private:
 	std::string user_id;
 	std::string username;
-	long long cash;
-
+	long long available_cash;
+	long long reserved_cash;
+	//std::unordered_map<std::string, int> available_stocks{};
+	//std::unordered_map<std::string, int> reserved_stocks{};
 	// Stock : Quantity
 	std::unordered_map<std::string, int> owned_stocks{};
 
-	//bool write_to_owned_stocks(Stock stock, int quantity);
-
 public:
-	User(std::string user_id, std::string username, long long cash);
+	User(std::string user_id, std::string username, long long cash_balance);
 
-	//bool add_stock(Stock stock, int quantity);
+	const std::string& get_user_id() const;
 
-	//bool add_stock(std::vector<std::pair<Stock, int>> stocks);
+	const std::string& get_username() const;
+
+	long long get_available_cash() const;
+
+	long long get_reserved_cash() const;
+
+	const std::unordered_map<std::string, int>& get_owned_stocks() const;
 
 	bool deposit_cash(long long amount);
 
-	bool buy_stock(std::string stock_id, int quantity, int limit_price);
+	bool buy_stock(const std::string& stock_id, int quantity, int limit_price);
 
-	bool sell_stock(std::string stock_id, int quantity, int limit_price);
+	bool sell_stock(const std::string& stock_id, int quantity, int limit_price) const;
+
+	void set_available_cash(int new_cash_balance);
+
+	void set_reserved_cash(int new_reserved_cash);
+
+	void add_owned_stock(const std::string& stock_id, int quantity);
 };
