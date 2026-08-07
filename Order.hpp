@@ -18,6 +18,7 @@ private:
 	int quantity;
 	int limit_price;
 	int reserved_cash;
+	std::unordered_map<std::string, int> reserved_stocks{};
 
 public:
 	Order(std::string order_id, std::string user_id, std::string stock_id, Side side, int quantity, int limit_price);

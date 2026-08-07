@@ -140,7 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Exchange.cpp" />
-    <ClCompile Include="MatchingEngine.cpp" />
     <ClCompile Include="Order.cpp" />
     <ClCompile Include="Order.hpp" />
     <ClCompile Include="OrderBook.cpp" />
@@ -150,7 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exchange.hpp" />
-    <ClInclude Include="MatchingEngine.hpp" />
     <ClInclude Include="OrderBook.hpp" />
     <ClInclude Include="Stock.hpp" />
     <ClInclude Include="User.hpp" />

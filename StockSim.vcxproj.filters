@@ -36,9 +36,6 @@
     <ClCompile Include="OrderBook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MatchingEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OrderBook.hpp">
@@ -51,9 +48,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Exchange.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatchingEngine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

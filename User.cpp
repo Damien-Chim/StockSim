@@ -29,8 +29,12 @@ long long User::get_reserved_cash() const {
 	return reserved_cash;
 }
 
-const std::unordered_map<std::string, int>& User::get_owned_stocks() const {
-	return owned_stocks;
+const std::unordered_map<std::string, int>& User::get_available_stocks() const {
+	return available_stocks;
+}
+
+const std::unordered_map<std::string, int>& User::get_reserved_stocks() const {
+	return reserved_stocks;
 }
 
 bool User::deposit_cash(long long amount) {
@@ -45,15 +49,28 @@ bool User::buy_stock(const std::string& stock_id, int quantity, int limit_price)
 	long long locked = quantity * limit_price;
 	reserved_cash += locked;
 	available_cash -= locked;
-	return Exchange::buy_request(user_id, stock_id, quantity, limit_price);
+	bool success = Exchange::buy_request(user_id, stock_id, quantity, limit_price);
+	if (!success) {
+		reserved_cash -= locked;
+		available_cash += locked;
+	}
+	return true;
 }
 
-bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price) const {
+bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price) {
 	if (quantity < 0 || limit_price < 0) { return false; }
-	auto stock_it = owned_stocks.find(stock_id);
-	if (stock_it == owned_stocks.end()) { return false; }
-	if (quantity > stock_it->second) { return false; }
-	return Exchange::sell_request(user_id, stock_id, quantity, limit_price);
+	auto available_stock_it = available_stocks.find(stock_id);
+	if (available_stock_it == available_stocks.end()) { return false; }
+	if (quantity > available_stock_it->second) { return false; }
+	std::unordered_map<std::string, int> locked = { {available_stock_it->first, quantity} };
+	add_reserved_stocks(locked);
+	remove_available_stocks(locked);
+	bool success = Exchange::sell_request(user_id, stock_id, quantity, limit_price);
+	if (!success) {
+		remove_reserved_stocks(locked);
+		add_available_stocks(locked);
+	}
+	return true;
 }
 
 void User::set_available_cash(int new_cash_balance) {
@@ -64,6 +81,34 @@ void User::set_reserved_cash(int new_reserved_cash) {
 	reserved_cash = new_reserved_cash;
 }
 
-void User::add_owned_stock(const std::string& stock_id, int quantity) {
-	owned_stocks[stock_id] += quantity;
+void User::add_available_stocks(const std::unordered_map<std::string, int>& new_available_stocks) {
+	for (auto& [stock_id, quantity] : new_available_stocks) {
+		available_stocks[stock_id] += quantity;
+	}
+}
+
+void User::add_reserved_stocks(const std::unordered_map<std::string, int>& new_reserved_stocks) {
+	for (auto& [stock_id, quantity] : new_reserved_stocks) {
+		reserved_stocks[stock_id] += quantity;
+	}
+}
+
+void User::remove_available_stocks(const std::unordered_map<std::string, int>& stocks_to_remove) {
+	for (auto& [stock_id, quantity] : stocks_to_remove) {
+		auto it = available_stocks.find(stock_id);
+		if (it != available_stocks.end()) {
+			it->second -= quantity;
+			if (it->second == 0) { available_stocks.erase(it); }
+		}
+	}
+}
+
+void User::remove_reserved_stocks(const std::unordered_map<std::string, int>& stocks_to_remove) {
+	for (auto& [stock_id, quantity] : stocks_to_remove) {
+		auto it = reserved_stocks.find(stock_id);
+		if (it != reserved_stocks.end()) {
+			it->second -= quantity;
+			if (it->second == 0) { reserved_stocks.erase(it); }
+		}
+	}
 }
