@@ -7,8 +7,16 @@ Order::Order(std::string order_id, std::string user_id, std::string stock_id, Si
 	stock_id{ stock_id }, 
 	side{ side }, 
 	quantity{ quantity }, 
-	limit_price{ limit_price }, 
-	reserved_cash{ quantity * limit_price } {
+	limit_price{ limit_price } {
+	if (side == Side::BUY) {
+		reserved_cash = quantity * limit_price;
+		//reserved_stocks = {};
+	}
+
+	else if (side == Side::SELL) {
+		//reserved_stocks = { {stock_id, quantity} };
+		reserved_cash = 0;
+	}
 }
 
 /*

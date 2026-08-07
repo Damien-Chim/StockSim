@@ -26,7 +26,7 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 	return true;
 }
 
-bool Exchange::buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price) {
+bool Exchange::sell_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price) {
 	auto user_it = user_map.find(user_id);
 	if (user_it == user_map.end()) { return false; }
 

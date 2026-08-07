@@ -6,14 +6,14 @@
 #include <algorithm>
 void OrderBook::place_order(const std::string& user_id, const std::string stock_id, int quantity, Side side, int limit_price) {
 	std::string order_id = Exchange::generate_order_id();
-	Order order(order_id, user_id, stock_id, Side::SELL, quantity, limit_price);
+	Order order(order_id, user_id, stock_id, side, quantity, limit_price);
 	active_orders[order_id] = order;
 	if (side == Side::BUY) {
 		buy_orders[limit_price].push(order_id);
 	}
 
 	else if (side == Side::SELL) {
-		buy_orders[limit_price].push(order_id);
+		sell_orders[limit_price].push(order_id);
 	}
 }
 
@@ -32,23 +32,30 @@ void OrderBook::match_orders() {
 
 		int execution_price = sell_order.get_limit_price();
 		int traded_quantity = std::min(buy_order.get_quantity(), sell_order.get_quantity());
-		int spent = execution_price * traded_quantity;
+		int reserved_cash_spent = execution_price * traded_quantity;
 
 		buy_order.set_quantity(buy_order.get_quantity() - traded_quantity);
-		buy_order.set_reserved_cash(buy_order.get_reserved_cash() - spent);
+		buy_order.set_reserved_cash(buy_order.get_reserved_cash() - reserved_cash_spent);
 		sell_order.set_quantity(sell_order.get_quantity() - traded_quantity);
 
-		User& user = Exchange::get_user(buy_order.get_user_id());
-		user.set_reserved_cash(user.get_reserved_cash() - spent);
-		user.add_owned_stock(buy_order.get_stock_id(), traded_quantity);
+		User& buyer = Exchange::get_user(buy_order.get_user_id());
+		buyer.set_reserved_cash(buyer.get_reserved_cash() - reserved_cash_spent);  // buyer uses up reserved_cash
+		buyer.add_available_stocks({ {buy_order.get_stock_id(), traded_quantity} });  // in exchange for new stocks
 
+		User& seller = Exchange::get_user(sell_order.get_user_id());
+		seller.remove_reserved_stocks({ {sell_order.get_stock_id(), traded_quantity} });  // seller uses up reserved_stock
+		seller.set_available_cash(seller.get_available_cash() + reserved_cash_spent);    // in exchange for money
+
+		// buyer order is fulfiled
 		if (buy_order.get_quantity() == 0) {
-			user.set_available_cash(user.get_available_cash() + buy_order.get_reserved_cash());
-			user.set_reserved_cash(user.get_reserved_cash() - buy_order.get_reserved_cash());
+			// refund on price improvement
+			buyer.set_available_cash(buyer.get_available_cash() + buy_order.get_reserved_cash());
+			buyer.set_reserved_cash(buyer.get_reserved_cash() - buy_order.get_reserved_cash());
 			active_orders.erase(buy_order_id);
 			clean_buy_level();
 		}
 
+		// seller order is fullfiled
 		if (sell_order.get_quantity() == 0) {
 			active_orders.erase(sell_order_id);
 			clean_sell_level();
