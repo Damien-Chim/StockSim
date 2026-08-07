@@ -17,6 +17,24 @@ void OrderBook::place_order(const std::string& user_id, const std::string stock_
 	}
 }
 
+void OrderBook::clean_buy_level() {
+	while (true) {
+		if (buy_orders.empty()) { return; }
+		if (active_orders.contains(buy_orders.begin()->second.front())) { return; }
+		buy_orders.begin()->second.pop();
+		if (buy_orders.begin()->second.empty()) { buy_orders.erase(buy_orders.begin()); }
+	}
+}
+
+void OrderBook::clean_sell_level() {
+	while (true) {
+		if (sell_orders.empty()) { return; }
+		if (active_orders.contains(sell_orders.begin()->second.front())) { return; }
+		sell_orders.begin()->second.pop();
+		if (sell_orders.begin()->second.empty()) { sell_orders.erase(sell_orders.begin()); }
+	}
+}
+
 void OrderBook::match_orders() {
 	clean_buy_level();
 	clean_sell_level();
