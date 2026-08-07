@@ -4,7 +4,6 @@
 #include <queue>
 #include <string>
 #include "Order.hpp"
-#include "MatchingEngine.hpp"
 
 class OrderBook {
 private:
