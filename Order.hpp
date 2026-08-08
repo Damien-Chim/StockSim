@@ -8,6 +8,13 @@ enum class Side {
 	SELL
 };
 
+enum class Status {
+	OPEN, 
+	FILLED,
+	PARTIALLY_FILLED,
+	CANCELED
+};
+
 class Order {
 
 private:
@@ -18,10 +25,10 @@ private:
 	int quantity;
 	int limit_price;
 	int reserved_cash;
-	//std::unordered_map<std::string, int> reserved_stocks{};
+	Status status;
 
 public:
-	Order(std::string order_id, std::string user_id, std::string stock_id, Side side, int quantity, int limit_price);
+	Order(std::string order_id, std::string user_id, std::string stock_id, Side side, int quantity, int limit_price, Status status);
 	const std::string& get_order_id() const;
 	const std::string& get_user_id() const;
 	const std::string& get_stock_id() const;
@@ -29,9 +36,11 @@ public:
 	int get_quantity() const;
 	int get_limit_price() const;
 	int get_reserved_cash() const;
+	Status get_status() const;
 	const std::unordered_map<std::string, int>& get_reserved_stocks() const;
 	void set_quantity(int new_quantity);
 	void set_reserved_cash(int new_reserved_cash);
 	void add_reserved_stocks(const std::unordered_map<std::string, int>& new_reserved_stocks);
 	void remove_reserved_stocks(const std::unordered_map<std::string, int>& stocks_to_remove);
+	void set_status(Status new_status);
 };

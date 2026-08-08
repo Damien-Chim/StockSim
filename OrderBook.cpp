@@ -4,10 +4,11 @@
 #include "User.hpp"
 #include <queue>
 #include <algorithm>
-void OrderBook::place_order(const std::string& user_id, const std::string stock_id, int quantity, Side side, int limit_price) {
-	std::string order_id = Exchange::generate_order_id();
-	Order order(order_id, user_id, stock_id, side, quantity, limit_price);
-	active_orders[order_id] = order;
+void OrderBook::place_order(Order& order) {
+	Side side = order.get_side();
+	int limit_price = order.get_limit_price();
+	std::string order_id = order.get_order_id();
+
 	if (side == Side::BUY) {
 		buy_orders[limit_price].push(order_id);
 	}
@@ -20,7 +21,10 @@ void OrderBook::place_order(const std::string& user_id, const std::string stock_
 void OrderBook::clean_buy_level() {
 	while (true) {
 		if (buy_orders.empty()) { return; }
-		if (active_orders.contains(buy_orders.begin()->second.front())) { return; }
+		const std::string order_id = buy_orders.begin()->second.front();
+		const Order& order = Exchange::get_order(order_id);
+		const Status order_status = order.get_status();
+		if (order_status == Status::OPEN || order_status == Status::PARTIALLY_FILLED) { return; }
 		buy_orders.begin()->second.pop();
 		if (buy_orders.begin()->second.empty()) { buy_orders.erase(buy_orders.begin()); }
 	}
@@ -29,7 +33,10 @@ void OrderBook::clean_buy_level() {
 void OrderBook::clean_sell_level() {
 	while (true) {
 		if (sell_orders.empty()) { return; }
-		if (active_orders.contains(sell_orders.begin()->second.front())) { return; }
+		const std::string order_id = sell_orders.begin()->second.front();
+		const Order& order = Exchange::get_order(order_id);
+		const Status order_status = order.get_status();
+		if (order_status == Status::OPEN || order_status == Status::PARTIALLY_FILLED) { return; }
 		sell_orders.begin()->second.pop();
 		if (sell_orders.begin()->second.empty()) { sell_orders.erase(sell_orders.begin()); }
 	}
@@ -45,8 +52,8 @@ void OrderBook::match_orders() {
 		std::string buy_order_id = buy_orders.begin()->second.front();
 		std::string sell_order_id = sell_orders.begin()->second.front();
 
-		Order& buy_order = active_orders[buy_order_id];
-		Order& sell_order = active_orders[sell_order_id];
+		Order& buy_order = Exchange::get_order(buy_order_id);
+		Order& sell_order = Exchange::get_order(sell_order_id);
 
 		int execution_price = sell_order.get_limit_price();
 		int traded_quantity = std::min(buy_order.get_quantity(), sell_order.get_quantity());
@@ -69,14 +76,22 @@ void OrderBook::match_orders() {
 			// refund on price improvement
 			buyer.set_available_cash(buyer.get_available_cash() + buy_order.get_reserved_cash());
 			buyer.set_reserved_cash(buyer.get_reserved_cash() - buy_order.get_reserved_cash());
-			active_orders.erase(buy_order_id);
+			buy_order.set_status(Status::FILLED);
 			clean_buy_level();
+		}
+
+		else {
+			buy_order.set_status(Status::PARTIALLY_FILLED);
 		}
 
 		// seller order is fullfiled
 		if (sell_order.get_quantity() == 0) {
-			active_orders.erase(sell_order_id);
+			sell_order.set_status(Status::FILLED);
 			clean_sell_level();
+		}
+
+		else {
+			sell_order.set_status(Status::PARTIALLY_FILLED);
 		}
 	}
 }

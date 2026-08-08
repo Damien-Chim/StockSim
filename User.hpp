@@ -37,6 +37,8 @@ public:
 
 	bool sell_stock(const std::string& stock_id, int quantity, int limit_price);
 
+	bool cancel_trade(const std::string& order_id);
+
 	void set_available_cash(int new_cash_balance);
 
 	void set_reserved_cash(int new_reserved_cash);

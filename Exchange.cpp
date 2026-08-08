@@ -19,8 +19,12 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 
 	if (quantity < 0 || limit_price < 0) { return false; }
 
+	std::string order_id = generate_order_id();
+	Order order(order_id, user_id, stock_id, Side::BUY, quantity, limit_price, Status::OPEN);
+	order_map[order_id];
+	
 	Stock& stock = stock_it->second;
-	stock.get_order_book().place_order(user_id, stock_id, quantity, Side::BUY, limit_price);
+	stock.get_order_book().place_order(order);
 	stock.get_order_book().match_orders();
 
 	return true;
@@ -35,13 +39,31 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 
 	if (quantity < 0 || limit_price < 0) { return false; }
 	
+	std::string order_id = generate_order_id();
+	Order order(order_id, user_id, stock_id, Side::SELL, quantity, limit_price, Status::OPEN);
+	order_map[order_id];
+
 	Stock& stock = stock_it->second;
-	stock.get_order_book().place_order(user_id, stock_id, quantity, Side::SELL, limit_price);
+	stock.get_order_book().place_order(order);
 	stock.get_order_book().match_orders();
 
 	return true;
 }
 
+bool Exchange::cancel_request(const std::string& user_id, const std::string& order_id) {
+	auto user_it = user_map.find(user_id);
+	if (user_it == user_map.end()) { return false; }
+	auto order_it = order_map.find(order_id);
+	if (order_it == order_map.end()) { return false; }
+	if (order_it->second.get_user_id() != user_id) { return false; }
+	order_it->second.set_status(Status::CANCELED);
+	return true;
+}
+
 User& Exchange::get_user(const std::string& user_id) {
 	return user_map[user_id];
+}
+
+Order& Exchange::get_order(const std::string& order_id) {
+	return order_map[order_id];
 }

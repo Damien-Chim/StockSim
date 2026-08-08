@@ -1,32 +1,22 @@
 #include "Order.hpp"
 #include "User.hpp"
 #include <string>
-Order::Order(std::string order_id, std::string user_id, std::string stock_id, Side side, int quantity, int limit_price) :
+Order::Order(std::string order_id, std::string user_id, std::string stock_id, Side side, int quantity, int limit_price, Status status) :
 	order_id{ order_id }, 
 	user_id{ user_id }, 
 	stock_id{ stock_id }, 
 	side{ side }, 
 	quantity{ quantity }, 
-	limit_price{ limit_price } {
+	limit_price{ limit_price },
+	status{ status } {
 	if (side == Side::BUY) {
 		reserved_cash = quantity * limit_price;
-		//reserved_stocks = {};
 	}
 
 	else if (side == Side::SELL) {
-		//reserved_stocks = { {stock_id, quantity} };
 		reserved_cash = 0;
 	}
 }
-
-/*
-	const std::string& get_order_id() const;
-	const std::string& get_user_id() const;
-	const std::string& get_stock_id() const;
-	Side get_side() const;
-	int get_quantity() const;
-	int get_limit_price() const;
-*/
 
 const std::string& Order::get_order_id() const {
 	return order_id;
@@ -56,6 +46,10 @@ int Order::get_reserved_cash() const {
 	return reserved_cash;
 }
 
+Status Order::get_status() const {
+	return status;
+}
+
 void Order::set_quantity(int new_quantity) {
 	quantity = new_quantity;
 }
@@ -63,3 +57,19 @@ void Order::set_quantity(int new_quantity) {
 void Order::set_reserved_cash(int new_reserved_cash) {
 	reserved_cash = new_reserved_cash;
 }
+
+void Order::set_status(Status new_status) {
+	status = new_status;
+}
+
+/*
+
+Order status types
+- Pending: The system received your order, but the market is closed or waiting for your target price.
+- Open: Your order is active in the market book, waiting for a match.
+- Filled: The trade finished completely at the set price.
+- Partially Filled: Only some shares traded; the rest remain open.
+- Canceled: You or the system stopped the order before it finished.
+- Rejected: The broker or exchange declined the order due to an error or low funds.
+
+*/

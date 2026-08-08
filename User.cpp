@@ -73,6 +73,10 @@ bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price
 	return true;
 }
 
+bool User::cancel_trade(const std::string& order_id) {
+	return Exchange::cancel_request(user_id, order_id);
+}
+
 void User::set_available_cash(int new_cash_balance) {
 	available_cash = new_cash_balance;
 }
