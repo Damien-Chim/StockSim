@@ -16,6 +16,6 @@ public:
 	static bool buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price);
 	static bool sell_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price);
 	static bool cancel_request(const std::string& user_id, const std::string& order_id);
-	static User& get_user(const std::string& user_id);
-	static Order& get_order(const std::string& order_id);
+	static User* get_user(const std::string& user_id);
+	static Order* get_order(const std::string& order_id);
 };

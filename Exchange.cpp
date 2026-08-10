@@ -51,19 +51,24 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 }
 
 bool Exchange::cancel_request(const std::string& user_id, const std::string& order_id) {
-	auto user_it = user_map.find(user_id);
-	if (user_it == user_map.end()) { return false; }
-	auto order_it = order_map.find(order_id);
-	if (order_it == order_map.end()) { return false; }
-	if (order_it->second.get_user_id() != user_id) { return false; }
-	order_it->second.set_status(Status::CANCELED);
+	User* user = get_user(user_id);
+	if (user == nullptr) { return false; }
+	Order* order = get_order(order_id);
+	if (order == nullptr) { return false; }
+	if (order->get_user_id() != user_id) { return false; }
+	order->set_status(Status::CANCELED);
+	// refund stocks to the user
 	return true;
 }
 
-User& Exchange::get_user(const std::string& user_id) {
-	return user_map[user_id];
+User* Exchange::get_user(const std::string& user_id) {
+	auto user_it = user_map.find(user_id);
+	if (user_it == user_map.end()) { return nullptr; }
+	return &user_it->second;
 }
 
-Order& Exchange::get_order(const std::string& order_id) {
-	return order_map[order_id];
+Order* Exchange::get_order(const std::string& order_id) {
+	auto order_it = order_map.find(order_id);
+	if (order_it == order_map.end()) { return nullptr; }
+	return &order_it->second;
 }
