@@ -56,8 +56,24 @@ bool Exchange::cancel_request(const std::string& user_id, const std::string& ord
 	Order* order = get_order(order_id);
 	if (order == nullptr) { return false; }
 	if (order->get_user_id() != user_id) { return false; }
+
+	// refund stocks/cash to user
+	const Side side = order->get_side();
+	const std::string stock_id = order->get_stock_id();
+	const int remaining_stock_quantity = order->get_quantity();
+	const int remaining_cash = order->get_reserved_cash();
+
+	if (side == Side::BUY) {
+		user->set_available_cash(user->get_available_cash() + remaining_cash);
+		user->set_reserved_cash(user->get_reserved_cash() - remaining_cash);
+	}
+
+	else if (side == Side::SELL) {
+		user->add_available_stocks({ {stock_id, remaining_stock_quantity} });
+		user->remove_reserved_stocks({ {stock_id, remaining_stock_quantity} });
+	}
+
 	order->set_status(Status::CANCELED);
-	// refund stocks to the user
 	return true;
 }
 

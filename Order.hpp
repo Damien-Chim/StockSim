@@ -37,10 +37,10 @@ public:
 	int get_limit_price() const;
 	int get_reserved_cash() const;
 	Status get_status() const;
-	const std::unordered_map<std::string, int>& get_reserved_stocks() const;
+	// const std::unordered_map<std::string, int>& get_reserved_stocks() const;
 	void set_quantity(int new_quantity);
 	void set_reserved_cash(int new_reserved_cash);
-	void add_reserved_stocks(const std::unordered_map<std::string, int>& new_reserved_stocks);
-	void remove_reserved_stocks(const std::unordered_map<std::string, int>& stocks_to_remove);
+	// void add_reserved_stocks(const std::unordered_map<std::string, int>& new_reserved_stocks);
+	// void remove_reserved_stocks(const std::unordered_map<std::string, int>& stocks_to_remove);
 	void set_status(Status new_status);
 };
