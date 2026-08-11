@@ -108,6 +108,11 @@ void Exchange::add_user(User& user) {
 	user_map[user_id] = user;
 }
 
+void Exchange::add_stock(Stock& stock) {
+	const std::string stock_id = stock.get_stock_id();
+	stock_map[stock_id] = stock;
+}
+
 const std::unordered_map<std::string, Trade>& Exchange::get_trades() {
 	return trade_map;
 }
