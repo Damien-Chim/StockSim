@@ -1,6 +1,7 @@
 
 #include "Exchange.hpp"
 #include "Order.hpp"
+#include "Trade.hpp"
 #include <optional>
 #include <string>
 int Exchange::next_order_id = 0;
@@ -92,4 +93,9 @@ Order* Exchange::get_order(const std::string& order_id) {
 	auto order_it = order_map.find(order_id);
 	if (order_it == order_map.end()) { return nullptr; }
 	return &order_it->second;
+}
+
+void Exchange::add_trade(Trade& trade) {
+	const std::string trade_id = trade.get_trade_id();
+	trade_map[trade_id] = trade;
 }
