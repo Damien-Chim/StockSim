@@ -143,6 +143,7 @@
     <ClCompile Include="Order.cpp" />
     <ClCompile Include="Order.hpp" />
     <ClCompile Include="OrderBook.cpp" />
+    <ClCompile Include="Trade.cpp" />
     <ClCompile Include="Stock.cpp" />
     <ClCompile Include="StockSim.cpp" />
     <ClCompile Include="User.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Exchange.hpp" />
     <ClInclude Include="OrderBook.hpp" />
     <ClInclude Include="Stock.hpp" />
+    <ClInclude Include="Trade.hpp" />
     <ClInclude Include="User.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
