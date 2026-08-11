@@ -10,6 +10,11 @@ std::string Exchange::generate_order_id() {
 	next_order_id += 1;
 }
 
+std::string Exchange::generate_trade_id() {
+	return "TRADE_" + std::to_string(next_trade_id);
+	next_trade_id += 1;
+}
+
 bool Exchange::buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price) {
 	auto user_it = user_map.find(user_id);
 	if (user_it == user_map.end()) { return false; }
