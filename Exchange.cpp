@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 int Exchange::next_order_id = 0;
+int Exchange::next_trade_id = 0;
 
 std::string Exchange::generate_order_id() {
 	std::string id = "ORDER_" + std::to_string(next_order_id);
