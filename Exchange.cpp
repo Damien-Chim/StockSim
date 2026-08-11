@@ -116,3 +116,9 @@ void Exchange::add_stock(Stock& stock) {
 const std::unordered_map<std::string, Trade>& Exchange::get_trades() {
 	return trade_map;
 }
+
+Trade* Exchange::get_trade(const std::string& trade_id) {
+	auto it = trade_map.find(trade_id);
+	if (it == trade_map.end()) { return nullptr; }
+	return &it->second;
+}

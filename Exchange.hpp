@@ -26,4 +26,5 @@ public:
 	static void add_user(User& user);
 	static void add_stock(Stock& stock);
 	static const std::unordered_map<std::string, Trade>& get_trades();
+	static Trade* get_trade(const std::string& trade_id);
 };
