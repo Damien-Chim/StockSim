@@ -39,9 +39,9 @@ public:
 
 	bool cancel_trade(const std::string& order_id);
 
-	void set_available_cash(int new_cash_balance);
+	void set_available_cash(long long new_cash_balance);
 
-	void set_reserved_cash(int new_reserved_cash);
+	void set_reserved_cash(long long new_reserved_cash);
 
 	void add_available_stocks(const std::unordered_map<std::string, int>& new_available_stocks);
 

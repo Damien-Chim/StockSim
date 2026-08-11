@@ -46,7 +46,7 @@ bool User::deposit_cash(long long amount) {
 bool User::buy_stock(const std::string& stock_id, int quantity, int limit_price) {
 	if (quantity <= 0 || limit_price <= 0) { return false; }
 	if (quantity * limit_price > available_cash) { return false; }
-	long long locked = quantity * limit_price;
+	long long locked = static_cast<long long>(quantity * limit_price);
 	reserved_cash += locked;
 	available_cash -= locked;
 	bool success = Exchange::buy_request(user_id, stock_id, quantity, limit_price);
@@ -77,11 +77,11 @@ bool User::cancel_trade(const std::string& order_id) {
 	return Exchange::cancel_request(user_id, order_id);
 }
 
-void User::set_available_cash(int new_cash_balance) {
+void User::set_available_cash(long long new_cash_balance) {
 	available_cash = new_cash_balance;
 }
 
-void User::set_reserved_cash(int new_reserved_cash) {
+void User::set_reserved_cash(long long new_reserved_cash) {
 	reserved_cash = new_reserved_cash;
 }
 

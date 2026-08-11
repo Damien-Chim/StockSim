@@ -10,7 +10,7 @@ Order::Order(std::string order_id, std::string user_id, std::string stock_id, Si
 	limit_price{ limit_price },
 	status{ status } {
 	if (side == Side::BUY) {
-		reserved_cash = quantity * limit_price;
+		reserved_cash = static_cast<long long>(quantity * limit_price);
 	}
 
 	else if (side == Side::SELL) {
@@ -42,7 +42,7 @@ int Order::get_limit_price() const {
 	return limit_price;
 }
 
-int Order::get_reserved_cash() const {
+long long Order::get_reserved_cash() const {
 	return reserved_cash;
 }
 
@@ -54,7 +54,7 @@ void Order::set_quantity(int new_quantity) {
 	quantity = new_quantity;
 }
 
-void Order::set_reserved_cash(int new_reserved_cash) {
+void Order::set_reserved_cash(long long new_reserved_cash) {
 	reserved_cash = new_reserved_cash;
 }
 
