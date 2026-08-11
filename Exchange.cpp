@@ -64,7 +64,7 @@ bool Exchange::cancel_request(const std::string& user_id, const std::string& ord
 	Order* order = get_order(order_id);
 	if (order == nullptr) { return false; }
 	if (order->get_user_id() != user_id) { return false; }
-
+	if (order->get_status() != Status::OPEN && order->get_status() != Status::PARTIALLY_FILLED) { return false; }
 	// refund stocks/cash to user
 	const Side side = order->get_side();
 	const std::string stock_id = order->get_stock_id();
