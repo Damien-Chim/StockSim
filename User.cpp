@@ -54,7 +54,7 @@ bool User::buy_stock(const std::string& stock_id, int quantity, int limit_price)
 		reserved_cash -= locked;
 		available_cash += locked;
 	}
-	return true;
+	return success;
 }
 
 bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price) {
@@ -70,7 +70,7 @@ bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price
 		remove_reserved_stocks(locked);
 		add_available_stocks(locked);
 	}
-	return true;
+	return success;
 }
 
 bool User::cancel_trade(const std::string& order_id) {
