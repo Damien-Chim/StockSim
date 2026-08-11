@@ -1,6 +1,7 @@
 #include "OrderBook.hpp"
 #include "Order.hpp"
 #include "Exchange.hpp"
+#include "Trade.hpp"
 #include "User.hpp"
 #include <queue>
 #include <algorithm>
@@ -93,5 +94,10 @@ void OrderBook::match_orders() {
 		else {
 			sell_order->set_status(Status::PARTIALLY_FILLED);
 		}
+
+		std::string trade_id = Exchange::generate_trade_id();
+		std::string stock_id = buy_order->get_stock_id();
+		Trade trade(trade_id, stock_id, buyer->get_user_id(), seller->get_user_id(), traded_quantity, execution_price);
+		Exchange::add_trade(trade);
 	}
 }
