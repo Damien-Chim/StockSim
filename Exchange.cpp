@@ -7,13 +7,15 @@
 int Exchange::next_order_id = 0;
 
 std::string Exchange::generate_order_id() {
-	return "ORDER_" + std::to_string(next_order_id);
+	std::string id = "ORDER_" + std::to_string(next_order_id);
 	next_order_id += 1;
+	return id;
 }
 
 std::string Exchange::generate_trade_id() {
-	return "TRADE_" + std::to_string(next_trade_id);
+	std::string id = "TRADE_" + std::to_string(next_trade_id);
 	next_trade_id += 1;
+	return id;
 }
 
 bool Exchange::buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price) {
@@ -98,4 +100,8 @@ Order* Exchange::get_order(const std::string& order_id) {
 void Exchange::add_trade(Trade& trade) {
 	const std::string trade_id = trade.get_trade_id();
 	trade_map[trade_id] = trade;
+}
+
+const std::unordered_map<std::string, Trade>& Exchange::get_trades() {
+	return trade_map;
 }
