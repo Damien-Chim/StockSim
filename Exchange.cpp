@@ -29,7 +29,7 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::BUY, quantity, limit_price, Status::OPEN);
-	order_map[order_id];
+	order_map[order_id] = order;
 	
 	Stock& stock = stock_it->second;
 	stock.get_order_book().place_order(order);
@@ -49,7 +49,7 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 	
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::SELL, quantity, limit_price, Status::OPEN);
-	order_map[order_id];
+	order_map[order_id] = order;
 
 	Stock& stock = stock_it->second;
 	stock.get_order_book().place_order(order);
