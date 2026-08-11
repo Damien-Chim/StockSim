@@ -25,7 +25,7 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 	auto stock_it = stock_map.find(stock_id);
 	if (stock_it == stock_map.end()) { return false; }
 
-	if (quantity < 0 || limit_price < 0) { return false; }
+	if (quantity <= 0 || limit_price <= 0) { return false; }
 
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::BUY, quantity, limit_price, Status::OPEN);
@@ -45,7 +45,7 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 	auto stock_it = stock_map.find(stock_id);
 	if (stock_it == stock_map.end()) { return false; }
 
-	if (quantity < 0 || limit_price < 0) { return false; }
+	if (quantity <= 0 || limit_price <= 0) { return false; }
 	
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::SELL, quantity, limit_price, Status::OPEN);

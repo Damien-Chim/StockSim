@@ -44,7 +44,7 @@ bool User::deposit_cash(long long amount) {
 }
 
 bool User::buy_stock(const std::string& stock_id, int quantity, int limit_price) {
-	if (quantity < 0 || limit_price < 0) { return false; }
+	if (quantity <= 0 || limit_price <= 0) { return false; }
 	if (quantity * limit_price > available_cash) { return false; }
 	long long locked = quantity * limit_price;
 	reserved_cash += locked;
@@ -58,7 +58,7 @@ bool User::buy_stock(const std::string& stock_id, int quantity, int limit_price)
 }
 
 bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price) {
-	if (quantity < 0 || limit_price < 0) { return false; }
+	if (quantity <= 0 || limit_price <= 0) { return false; }
 	auto available_stock_it = available_stocks.find(stock_id);
 	if (available_stock_it == available_stocks.end()) { return false; }
 	if (quantity > available_stock_it->second) { return false; }
