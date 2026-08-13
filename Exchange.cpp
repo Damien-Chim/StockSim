@@ -6,6 +6,10 @@
 #include <string>
 int Exchange::next_order_id = 0;
 int Exchange::next_trade_id = 0;
+std::unordered_map<std::string, Stock> Exchange::stock_map;
+std::unordered_map<std::string, User> Exchange::user_map;
+std::unordered_map<std::string, Order> Exchange::order_map;
+std::unordered_map<std::string, Trade> Exchange::trade_map;
 
 std::string Exchange::generate_order_id() {
 	std::string id = "ORDER_" + std::to_string(next_order_id);
@@ -30,7 +34,7 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::BUY, quantity, limit_price, Status::OPEN);
-	order_map[order_id] = order;
+	order_map.emplace(order_id, order);
 	
 	Stock& stock = stock_it->second;
 	stock.get_order_book().place_order(order);
@@ -50,7 +54,7 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 	
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::SELL, quantity, limit_price, Status::OPEN);
-	order_map[order_id] = order;
+	order_map.emplace(order_id, order);
 
 	Stock& stock = stock_it->second;
 	stock.get_order_book().place_order(order);
@@ -100,17 +104,17 @@ Order* Exchange::get_order(const std::string& order_id) {
 
 void Exchange::add_trade(Trade& trade) {
 	const std::string trade_id = trade.get_trade_id();
-	trade_map[trade_id] = trade;
+	trade_map.emplace(trade_id, trade);
 }
 
 void Exchange::add_user(User user) {
 	const std::string user_id = user.get_user_id();
-	user_map[user_id] = user;
+	user_map.emplace(user_id, user);
 }
 
 void Exchange::add_stock(Stock stock) {
 	const std::string stock_id = stock.get_stock_id();
-	stock_map[stock_id] = stock;
+	stock_map.emplace(stock_id, stock);
 }
 
 const std::unordered_map<std::string, Trade>& Exchange::get_trades() {
