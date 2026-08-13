@@ -9,3 +9,5 @@ Release/
 *.pdb
 *.ilk
 *.log
+
+vcpkg_installed/
