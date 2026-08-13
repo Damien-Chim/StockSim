@@ -107,12 +107,12 @@ void Exchange::add_trade(Trade& trade) {
 	trade_map.emplace(trade_id, trade);
 }
 
-void Exchange::add_user(User& user) {
+void Exchange::add_user(User user) {
 	const std::string user_id = user.get_user_id();
 	user_map.emplace(user_id, user);
 }
 
-void Exchange::add_stock(Stock& stock) {
+void Exchange::add_stock(Stock stock) {
 	const std::string stock_id = stock.get_stock_id();
 	stock_map.emplace(stock_id, stock);
 }

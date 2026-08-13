@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-#include "User.hpp"
-#include "Stock.hpp"
 
 enum class Side {
 	BUY,
