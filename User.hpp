@@ -9,15 +9,15 @@ class User {
 private:
 	std::string user_id;
 	std::string username;
-	long long available_cash;
-	long long reserved_cash;
+	long long available_cash{ 0 };
+	long long reserved_cash{ 0 };
 	std::unordered_map<std::string, int> available_stocks{};
 	std::unordered_map<std::string, int> reserved_stocks{};
-	// Stock : Quantity
-	// std::unordered_map<std::string, int> owned_stocks{};
 
 public:
 	User(std::string user_id, std::string username, long long cash_balance);
+
+	User(std::string username);
 
 	const std::string& get_user_id() const;
 

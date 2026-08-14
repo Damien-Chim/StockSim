@@ -12,6 +12,14 @@ User::User(std::string user_id, std::string username, long long available_cash) 
 	user_id{ user_id }, username{ username }, available_cash{ available_cash }, reserved_cash{ 0 } {
 }
 
+User::User(std::string username) : 
+	user_id{ Exchange::generate_user_id() }, 
+	username{ username }, 
+	available_cash{ 0 }, 
+	reserved_cash{ 0 } {
+
+}
+
 const std::string& User::get_user_id() const {
 	return user_id;
 }
