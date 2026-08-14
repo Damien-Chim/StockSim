@@ -6,6 +6,8 @@
 #include "Stock.hpp"
 #include "Order.hpp"
 #include "Trade.hpp"
+#include "Server.hpp"
+#include "Client.hpp"
 
 static int stock_qty(const User& user, const std::string& stock_id) {
     const auto& stocks = user.get_available_stocks();
@@ -174,13 +176,31 @@ static void test_wrong_user_cannot_cancel() {
     std::cout << "[PASS] ownership check on cancellation\n";
 }
 
-int main() {
-    test_full_fill();
-    test_partial_buy_then_cancel();
-    test_partial_sell_then_cancel();
-    test_no_match();
-    test_wrong_user_cannot_cancel();
+int main(int argc, char* argv[]) {
+    if (argc != 2) { std::cout << "Invalid number of parameters" << std::endl; return 1; }
+    std::string mode = argv[1];
+    if (mode == "1") {
+        std::cout << "Server" << std::endl;
+        Server server(54000);
+        server.run();
+    }
+    
+    else if (mode == "2") {
+        std::cout << "Client" << std::endl;
+        Client client;
+        client.run();
+        
+    }
 
-    std::cout << "\nAll integration tests passed.\n";
+    else { std::cout << "Invalid code" << std::endl; return 1; }
+
+
+    //test_full_fill();
+    //test_partial_buy_then_cancel();
+    //test_partial_sell_then_cancel();
+    //test_no_match();
+    //test_wrong_user_cannot_cancel();
+
+    //std::cout << "\nAll integration tests passed.\n";
     return 0;
 }

@@ -148,6 +148,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="Exchange.cpp" />
     <ClCompile Include="Order.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -162,8 +163,10 @@
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Client.hpp" />
     <ClInclude Include="Exchange.hpp" />
     <ClInclude Include="OrderBook.hpp" />
+    <ClInclude Include="Server.hpp" />
     <ClInclude Include="Stock.hpp" />
     <ClInclude Include="Trade.hpp" />
     <ClInclude Include="User.hpp" />
