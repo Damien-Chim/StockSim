@@ -26,6 +26,7 @@ public:
 	static bool sell_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price);
 	static bool cancel_request(const std::string& user_id, const std::string& order_id);
 	static User* get_user(const std::string& user_id);
+	static std::unordered_map<std::string, User> get_users();
 	static Order* get_order(const std::string& order_id);
 	static void add_trade(Trade& trade);
 	static void add_user(User user);

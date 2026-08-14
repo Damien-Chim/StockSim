@@ -35,7 +35,7 @@ static std::string process_command(std::string request) {
 
     std::string instruction = tokens[0];
     if (instruction == "register") {
-        if (tokens.size() != 2) { return "Invalid Command"; }
+        if (tokens.size() != 2) { return "Invalid Command\n"; }
         std::string username = tokens[1];
         Exchange::add_user(User(username));
         return "Successfully registered user\n";

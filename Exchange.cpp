@@ -110,6 +110,10 @@ User* Exchange::get_user(const std::string& user_id) {
 	return &user_it->second;
 }
 
+std::unordered_map<std::string, User> Exchange::get_users() {
+	return user_map;
+}
+
 Order* Exchange::get_order(const std::string& order_id) {
 	auto order_it = order_map.find(order_id);
 	if (order_it == order_map.end()) { return nullptr; }
