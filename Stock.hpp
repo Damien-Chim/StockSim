@@ -14,6 +14,7 @@ private:
 
 public:
 	Stock(std::string stock_id, std::string stock_name, std::string stock_symbol, int market_price);
+	Stock(std::string stock_name, std::string stock_symbol, int market_price);
 	const std::string& get_stock_id() const;
 	const std::string& get_stock_name() const;
 	const std::string& get_stock_symbol() const;

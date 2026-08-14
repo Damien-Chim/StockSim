@@ -2,9 +2,14 @@
 #include "Stock.hpp"
 #include "Order.hpp"
 #include "OrderBook.hpp"
+#include "Exchange.hpp"
 
 Stock::Stock(std::string stock_id, std::string stock_name, std::string stock_symbol, int market_price) :
 	stock_id{ stock_id }, stock_name{ stock_name }, stock_symbol{ stock_symbol }, market_price{ market_price } {
+}
+
+Stock::Stock(std::string stock_name, std::string stock_symbol, int market_price) :
+	stock_id{ Exchange::generate_stock_id() }, stock_name{ stock_name }, stock_symbol{ stock_symbol }, market_price{ market_price } {
 
 }
 

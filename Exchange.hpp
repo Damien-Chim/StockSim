@@ -15,10 +15,13 @@ private:
 	static int next_order_id;
 	static int next_trade_id;
 	static int next_user_id;
+	static int next_stock_id;
+
 public:
 	static std::string generate_order_id();
 	static std::string generate_trade_id();
 	static std::string generate_user_id();
+	static std::string generate_stock_id();
 	static bool buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price);
 	static bool sell_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price);
 	static bool cancel_request(const std::string& user_id, const std::string& order_id);

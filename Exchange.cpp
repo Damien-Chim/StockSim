@@ -7,6 +7,7 @@
 int Exchange::next_order_id = 0;
 int Exchange::next_trade_id = 0;
 int Exchange::next_user_id = 0;
+int Exchange::next_stock_id = 0;
 std::unordered_map<std::string, Stock> Exchange::stock_map;
 std::unordered_map<std::string, User> Exchange::user_map;
 std::unordered_map<std::string, Order> Exchange::order_map;
@@ -27,6 +28,12 @@ std::string Exchange::generate_trade_id() {
 std::string Exchange::generate_user_id() {
 	std::string id = "USER_" + std::to_string(next_user_id);
 	next_user_id += 1;
+	return id;
+}
+
+std::string Exchange::generate_user_id() {
+	std::string id = "STOCK_" + std::to_string(next_stock_id);
+	next_stock_id += 1;
 	return id;
 }
 
