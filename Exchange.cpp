@@ -31,7 +31,7 @@ std::string Exchange::generate_user_id() {
 	return id;
 }
 
-std::string Exchange::generate_user_id() {
+std::string Exchange::generate_stock_id() {
 	std::string id = "STOCK_" + std::to_string(next_stock_id);
 	next_stock_id += 1;
 	return id;
