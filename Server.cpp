@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "Exchange.hpp"
+#include "User.hpp"
 #include <boost/asio.hpp>
 #include <iostream>
 #include <thread>
@@ -25,6 +26,50 @@ static std::vector<std::string> split(std::string s, const std::string& delimite
     tokens.push_back(s);
 
     return tokens;
+}
+
+static std::string get_input_string(boost::asio::streambuf* buffer) {
+    std::istream input(buffer);
+    std::string line;
+    std::getline(input, line);
+    return line;
+}
+
+static std::string handle_log_in(std::string request, std::string& user_id, bool& logged_in) {
+    std::vector<std::string> tokens = split(request, " ");
+    if (tokens.empty() || tokens.size() != 2) {
+        return "Invalid Command\n";
+    }
+
+    std::string instruction = tokens[0];
+    std::string username = tokens[1];
+
+    if (instruction == "login") {
+        for (auto& [uid, user] : Exchange::get_users()) {
+            if (user.get_username() == username) {
+                user_id = user.get_user_id();
+                logged_in = true;
+                return "Login successful\n";
+            }
+        }
+
+        return "User not found\n";
+
+    }
+    else if (instruction == "sign_up") {
+        for (auto& [uid, user] : Exchange::get_users()) {
+            if (user.get_username() == username) {
+                return "User already exists\n";
+            }
+        }
+        User new_user(username);
+        Exchange::add_user(new_user);
+        user_id = new_user.get_user_id();
+        logged_in = true;
+        return "Sign up and login successful\n";
+    }
+
+    return "Invalid command\n";
 }
 
 static std::string process_command(std::string request) {
@@ -63,15 +108,19 @@ static std::string process_command(std::string request) {
 static void client_thread(tcp::socket socket) {
     try {
         boost::asio::streambuf buffer;
+        bool logged_in = false;
+        std::string user_id;
+        while (!logged_in) {
+            boost::asio::read_until(socket, buffer, '\n');
+            std::string input_string = get_input_string(&buffer);
+            std::string response = handle_log_in(input_string, user_id, logged_in);
+            boost::asio::write(socket, boost::asio::buffer(response));
+        }
 
         while (true) {
             boost::asio::read_until(socket, buffer, '\n');
-
-            std::istream input(&buffer);
-            std::string line;
-            std::getline(input, line);
-            
-            std::string response = process_command(line);
+            std::string input_string = get_input_string(&buffer);
+            std::string response = process_command(input_string);
             boost::asio::write(socket, boost::asio::buffer(response));
         }
     }
