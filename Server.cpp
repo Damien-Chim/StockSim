@@ -154,6 +154,15 @@ static std::string process_command(std::string request, const std::string user_i
         return response;
     }
 
+    else if (instruction == "display_stocks_on_exchange") {
+        for (auto& [k, v] : Exchange::get_stocks()) {
+            oss << v.get_stock_name() << "_" << v.get_stock_symbol() << "@" << v.get_market_price() << " | ";
+        }
+        oss << "\n";
+        std::string response = oss.str();
+        return response;
+    }
+
     return "Invalid Command\n";
 }
 
