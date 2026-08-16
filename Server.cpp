@@ -72,34 +72,58 @@ static std::string handle_log_in(std::string request, std::string& user_id, bool
     return "Invalid command\n";
 }
 
-static std::string process_command(std::string request) {
+static std::string process_command(std::string request, const std::string user_id) {
+    User* user = Exchange::get_user(user_id);
+    std::ostringstream oss;
     std::vector<std::string> tokens = split(request, " ");
     if (tokens.empty()) {
         return "Invalid Command\n";
     }
 
     std::string instruction = tokens[0];
-    if (instruction == "register") {
-        if (tokens.size() != 2) { return "Invalid Command\n"; }
-        std::string username = tokens[1];
-        Exchange::add_user(User(username));
-        return "Successfully registered user\n";
-    }
+    //if (instruction == "register") {
+    //    if (tokens.size() != 2) { return "Invalid Command\n"; }
+    //    std::string username = tokens[1];
+    //    Exchange::add_user(User(username));
+    //    return "Successfully registered user\n";
+    //}
 
-    else if (instruction == "get_id") {
-
+    if (instruction == "get_id") {
+        std::string response = user->get_user_id();
+        response += '\n';
+        return response;
     }
 
     else if (instruction == "get_available_cash") {
-
+        long long available_cash = user->get_available_cash();
+        oss << available_cash << "\n";
+        std::string response = oss.str();
+        return response;
     }
 
     else if (instruction == "get_reserved_cash") {
-
+        long long reserved_cash = user->get_reserved_cash();
+        oss << reserved_cash << "\n";
+        std::string response = oss.str();
+        return response;
     }
     
-    else if (instruction == "get_available_cash") {
+    else if (instruction == "deposit_cash") {
+        long long deposit_amount = std::stoi(tokens[1]);
+        if (user->deposit_cash(deposit_amount)) {
+            return "Deposit successful\n";
+        }
+        return "Deposit failed\n";
+    }
 
+    else if (instruction == "buy_stock") {
+        //std::string stock_id = tokens[1];
+        //int quantity = std::stoi(tokens[2]);
+        //int limit_price = std::stoi(tokens[3]);
+        //if (user->buy_stock(stock_id, quantity, limit_price)) {
+        //    return "Order Placed\n";
+        //}
+        //return "Failed to place order";
     }
 
     return "Invalid Command\n";
@@ -120,7 +144,7 @@ static void client_thread(tcp::socket socket) {
         while (true) {
             boost::asio::read_until(socket, buffer, '\n');
             std::string input_string = get_input_string(&buffer);
-            std::string response = process_command(input_string);
+            std::string response = process_command(input_string, user_id);
             boost::asio::write(socket, boost::asio::buffer(response));
         }
     }
