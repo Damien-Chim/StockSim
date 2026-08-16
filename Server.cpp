@@ -136,6 +136,24 @@ static std::string process_command(std::string request, const std::string user_i
         return "Failed to place order\n";
     }
 
+    else if (instruction == "get_available_stocks") {
+        for (auto& [k, v] : user->get_available_stocks()) {
+            oss << k << ": " << v << " | ";
+        }
+        oss << "\n";
+        std::string response = oss.str();
+        return response;
+    }
+
+    else if (instruction == "get_reserved_stocks") {
+        for (auto& [k, v] : user->get_reserved_stocks()) {
+            oss << k << ": " << v << " | ";
+        }
+        oss << "\n";
+        std::string response = oss.str();
+        return response;
+    }
+
     return "Invalid Command\n";
 }
 

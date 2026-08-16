@@ -184,6 +184,17 @@ static void initialise() {
     Exchange::add_stock(Stock("McDonald's Corporation", "MCD", 273));
     Exchange::add_stock(Stock("JPMorgan Chase & Co.", "JPM", 363));
     Exchange::add_stock(Stock("Wallmart Inc.", "WMT", 115));
+    Exchange::add_user(User("Damien"));
+    User* user = Exchange::get_user("USER_0");
+    user->deposit_cash(10000);
+    user->add_available_stocks(
+        {
+            {"STOCK_0", 10},
+            {"STOCK_3", 20},
+            {"STOCK_6", 15}
+        }
+    );
+
 }
 
 int main(int argc, char* argv[]) {
