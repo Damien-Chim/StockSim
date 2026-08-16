@@ -117,13 +117,23 @@ static std::string process_command(std::string request, const std::string user_i
     }
 
     else if (instruction == "buy_stock") {
-        //std::string stock_id = tokens[1];
-        //int quantity = std::stoi(tokens[2]);
-        //int limit_price = std::stoi(tokens[3]);
-        //if (user->buy_stock(stock_id, quantity, limit_price)) {
-        //    return "Order Placed\n";
-        //}
-        //return "Failed to place order";
+        std::string stock_id = tokens[1];
+        int quantity = std::stoi(tokens[2]);
+        int limit_price = std::stoi(tokens[3]);
+        if (user->buy_stock(stock_id, quantity, limit_price)) {
+            return "Order Placed\n";
+        }
+        return "Failed to place order\n";
+    }
+
+    else if (instruction == "sell_stock") {
+        std::string stock_id = tokens[1];
+        int quantity = std::stoi(tokens[2]);
+        int limit_price = std::stoi(tokens[3]);
+        if (user->sell_stock(stock_id, quantity, limit_price)) {
+            return "Order Placed\n";
+        }
+        return "Failed to place order\n";
     }
 
     return "Invalid Command\n";
