@@ -176,7 +176,19 @@ static void test_wrong_user_cannot_cancel() {
     std::cout << "[PASS] ownership check on cancellation\n";
 }
 
+static void initialise() {
+    Exchange::add_stock(Stock("Intel Corporation", "INTC", 103));
+    Exchange::add_stock(Stock("NVIDIA Corporation", "NVDA", 225));
+    Exchange::add_stock(Stock("Tesla, Inc.", "TSLA", 342));
+    Exchange::add_stock(Stock("Ford Motor Company", "F", 14));
+    Exchange::add_stock(Stock("McDonald's Corporation", "MCD", 273));
+    Exchange::add_stock(Stock("JPMorgan Chase & Co.", "JPM", 363));
+    Exchange::add_stock(Stock("Wallmart Inc.", "WMT", 115));
+}
+
 int main(int argc, char* argv[]) {
+    initialise();
+
     if (argc != 2) { std::cout << "Invalid number of parameters" << std::endl; return 1; }
     std::string mode = argv[1];
     if (mode == "1") {

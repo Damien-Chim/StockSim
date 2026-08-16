@@ -144,3 +144,13 @@ Trade* Exchange::get_trade(const std::string& trade_id) {
 	if (it == trade_map.end()) { return nullptr; }
 	return &it->second;
 }
+
+Stock* Exchange::get_stock(const std::string& stock_id) {
+	auto it = stock_map.find(stock_id);
+	if (it == stock_map.end()) { return nullptr; }
+	return &it->second;
+}
+
+std::unordered_map<std::string, Stock> Exchange::get_stocks() {
+	return stock_map;
+}
