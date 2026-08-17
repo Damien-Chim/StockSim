@@ -158,6 +158,7 @@
     <ClCompile Include="OrderBook.cpp" />
     <ClCompile Include="Order.hpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="Trade.cpp" />
     <ClCompile Include="Stock.cpp" />
     <ClCompile Include="StockSim.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="OrderBook.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="Stock.hpp" />
+    <ClInclude Include="Time.hpp" />
     <ClInclude Include="Trade.hpp" />
     <ClInclude Include="User.hpp" />
   </ItemGroup>
