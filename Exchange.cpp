@@ -7,7 +7,7 @@
 #include <mutex>
 
 int Exchange::next_order_id = 0;
-// int Exchange::next_trade_id = 0;
+int Exchange::next_trade_id = 0;
 int Exchange::next_user_id = 0;
 int Exchange::next_stock_id = 0;
 std::unordered_map<std::string, Stock> Exchange::stock_map;
@@ -22,11 +22,11 @@ std::string Exchange::generate_order_id() {
 	return id;
 }
 
-//std::string Exchange::generate_trade_id() {
-//	std::string id = "TRADE_" + std::to_string(next_trade_id);
-//	next_trade_id += 1;
-//	return id;
-//}
+std::string Exchange::generate_trade_id() {
+	std::string id = "TRADE_" + std::to_string(next_trade_id);
+	next_trade_id += 1;
+	return id;
+}
 
 std::string Exchange::generate_user_id() {
 	std::lock_guard<std::mutex> lock(exchange_mutex);

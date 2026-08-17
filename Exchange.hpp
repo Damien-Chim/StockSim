@@ -14,14 +14,14 @@ private:
 	static std::unordered_map<std::string, Order> order_map;
 	// static std::unordered_map<std::string, Trade> trade_map;
 	static int next_order_id;
-	// static int next_trade_id;
+	static int next_trade_id;
 	static int next_user_id;
 	static int next_stock_id;
 	static std::mutex exchange_mutex;
 
 public:
 	static std::string generate_order_id();
-	// static std::string generate_trade_id();
+	static std::string generate_trade_id();
 	static std::string generate_user_id();
 	static std::string generate_stock_id();
 	static bool buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price);
