@@ -23,6 +23,9 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <iostream>
+#include "Stock.hpp"
+#include "Exchange.hpp"
 
 namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
@@ -129,7 +132,11 @@ private:
     // Construct a response message based on the program state.
     void create_response()
     {
-        if (request_.target() == "/api/test")
+        std::string target(request_.target());
+        std::string prefix = "/api/stocks/";
+        std::string suffix = "/candles";
+        std::cout << target << std::endl;
+        if (target == "/api/test")
         {
             response_.result(http::status::ok);
             response_.set(
@@ -140,6 +147,34 @@ private:
             boost::beast::ostream(response_.body())
                 << R"({"message":"StockSim HTTP server works"})";
         }
+
+        else if (target.starts_with(prefix) && target.ends_with(suffix)) {
+            std::size_t stock_id_start = prefix.size();
+            std::size_t stock_id_length = target.size() - prefix.size() - suffix.size();
+            std::string stock_id = target.substr(stock_id_start, stock_id_length);
+            Stock* stock = Exchange::get_stock(stock_id);
+            if (stock == nullptr) {
+                response_.result(http::status::not_found);
+                response_.set(
+                    http::field::content_type,
+                    "application/json"
+                );
+
+                boost::beast::ostream(response_.body())
+                    << R"({"error":"Stock not found"})";
+
+                return;
+            }
+            response_.result(http::status::ok);
+            response_.set(
+                http::field::content_type,
+                "application/json"
+            );
+
+            boost::beast::ostream(response_.body())
+                << R"({"message":"Stock found"})";
+        }
+
         else
         {
             response_.result(http::status::not_found);
