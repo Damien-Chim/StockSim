@@ -25,3 +25,7 @@ int Trade::get_quantity() {
 int Trade::get_price() {
     return price;
 }
+
+Timestamp Trade::get_executed_timestamp() {
+    return executed_timestamp;
+}
