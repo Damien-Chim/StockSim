@@ -81,16 +81,16 @@ static std::string process_command(std::string request, const std::string user_i
     }
 
     std::string instruction = tokens[0];
-    //if (instruction == "register") {
-    //    if (tokens.size() != 2) { return "Invalid Command\n"; }
-    //    std::string username = tokens[1];
-    //    Exchange::add_user(User(username));
-    //    return "Successfully registered user\n";
-    //}
 
     if (instruction == "get_id") {
         std::string response = user->get_user_id();
         response += '\n';
+        return response;
+    }
+
+    else if (instruction == "who_am_i") {
+        std::string response = user->get_username();
+        response += "\n";
         return response;
     }
 
