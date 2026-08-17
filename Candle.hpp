@@ -1,4 +1,5 @@
 #pragma once
+#include "Time.hpp"
 enum class Colour {
 	GREEN,
 	RED,
@@ -6,7 +7,7 @@ enum class Colour {
 };
 
 struct Candle {
-	int start_time;
+	Timestamp start_time;
 	int open;
 	int high;
 	int low;

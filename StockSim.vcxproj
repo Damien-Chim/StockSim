@@ -151,6 +151,7 @@
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Exchange.cpp" />
+    <ClCompile Include="HttpServer.cpp" />
     <ClCompile Include="Order.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -168,6 +169,7 @@
     <ClInclude Include="Candle.hpp" />
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="Exchange.hpp" />
+    <ClInclude Include="HttpServer.hpp" />
     <ClInclude Include="OrderBook.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="Stock.hpp" />
