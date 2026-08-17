@@ -7,13 +7,13 @@
 #include <mutex>
 
 int Exchange::next_order_id = 0;
-int Exchange::next_trade_id = 0;
+// int Exchange::next_trade_id = 0;
 int Exchange::next_user_id = 0;
 int Exchange::next_stock_id = 0;
 std::unordered_map<std::string, Stock> Exchange::stock_map;
 std::unordered_map<std::string, User> Exchange::user_map;
 std::unordered_map<std::string, Order> Exchange::order_map;
-std::unordered_map<std::string, Trade> Exchange::trade_map;
+// std::unordered_map<std::string, Trade> Exchange::trade_map;
 std::mutex Exchange::exchange_mutex;
 
 std::string Exchange::generate_order_id() {
@@ -22,11 +22,11 @@ std::string Exchange::generate_order_id() {
 	return id;
 }
 
-std::string Exchange::generate_trade_id() {
-	std::string id = "TRADE_" + std::to_string(next_trade_id);
-	next_trade_id += 1;
-	return id;
-}
+//std::string Exchange::generate_trade_id() {
+//	std::string id = "TRADE_" + std::to_string(next_trade_id);
+//	next_trade_id += 1;
+//	return id;
+//}
 
 std::string Exchange::generate_user_id() {
 	std::lock_guard<std::mutex> lock(exchange_mutex);
@@ -128,11 +128,11 @@ Order* Exchange::get_order(const std::string& order_id) {
 	return &order_it->second;
 }
 
-void Exchange::add_trade(Trade& trade) {
-	// std::lock_guard<std::mutex> lock(exchange_mutex);
-	const std::string trade_id = trade.get_trade_id();
-	trade_map.emplace(trade_id, trade);
-}
+//void Exchange::add_trade(Trade& trade) {
+//	// std::lock_guard<std::mutex> lock(exchange_mutex);
+//	const std::string trade_id = trade.get_trade_id();
+//	trade_map.emplace(trade_id, trade);
+//}
 
 void Exchange::add_user(User user) {
 	std::lock_guard<std::mutex> lock(exchange_mutex);
@@ -146,15 +146,15 @@ void Exchange::add_stock(Stock stock) {
 	stock_map.emplace(stock_id, stock);
 }
 
-const std::unordered_map<std::string, Trade>& Exchange::get_trades() {
-	return trade_map;
-}
+//const std::unordered_map<std::string, Trade>& Exchange::get_trades() {
+//	return trade_map;
+//}
 
-Trade* Exchange::get_trade(const std::string& trade_id) {
-	auto it = trade_map.find(trade_id);
-	if (it == trade_map.end()) { return nullptr; }
-	return &it->second;
-}
+//Trade* Exchange::get_trade(const std::string& trade_id) {
+//	auto it = trade_map.find(trade_id);
+//	if (it == trade_map.end()) { return nullptr; }
+//	return &it->second;
+//}
 
 Stock* Exchange::get_stock(const std::string& stock_id) {
 	auto it = stock_map.find(stock_id);

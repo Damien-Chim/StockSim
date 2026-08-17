@@ -12,16 +12,16 @@ private:
 	static std::unordered_map<std::string, Stock> stock_map;
 	static std::unordered_map<std::string, User> user_map;
 	static std::unordered_map<std::string, Order> order_map;
-	static std::unordered_map<std::string, Trade> trade_map;
+	// static std::unordered_map<std::string, Trade> trade_map;
 	static int next_order_id;
-	static int next_trade_id;
+	// static int next_trade_id;
 	static int next_user_id;
 	static int next_stock_id;
 	static std::mutex exchange_mutex;
 
 public:
 	static std::string generate_order_id();
-	static std::string generate_trade_id();
+	// static std::string generate_trade_id();
 	static std::string generate_user_id();
 	static std::string generate_stock_id();
 	static bool buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price);
@@ -30,11 +30,11 @@ public:
 	static User* get_user(const std::string& user_id);
 	static std::unordered_map<std::string, User> get_users();
 	static Order* get_order(const std::string& order_id);
-	static void add_trade(Trade& trade);
+	// static void add_trade(Trade& trade);
 	static void add_user(User user);
 	static void add_stock(Stock stock);
-	static const std::unordered_map<std::string, Trade>& get_trades();
-	static Trade* get_trade(const std::string& trade_id);
+	// static const std::unordered_map<std::string, Trade>& get_trades();
+	// static Trade* get_trade(const std::string& trade_id);
 	static Stock* get_stock(const std::string& stock_id);
 	static std::unordered_map<std::string, Stock> get_stocks();
 };

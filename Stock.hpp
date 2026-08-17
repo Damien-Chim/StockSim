@@ -25,4 +25,6 @@ public:
 	const std::string& get_stock_symbol() const;
 	int get_market_price() const;
 	OrderBook& get_order_book();
+	void add_trade(const Trade& new_trade);
+	void update_candle(const Trade& new_trade);
 };

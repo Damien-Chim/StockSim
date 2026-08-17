@@ -3,6 +3,7 @@
 #include "Exchange.hpp"
 #include "Trade.hpp"
 #include "User.hpp"
+#include "Time.hpp"
 #include <queue>
 #include <algorithm>
 void OrderBook::place_order(Order& order) {
@@ -97,7 +98,12 @@ void OrderBook::match_orders() {
 
 		std::string trade_id = Exchange::generate_trade_id();
 		std::string stock_id = buy_order->get_stock_id();
-		Trade trade(trade_id, stock_id, buyer->get_user_id(), seller->get_user_id(), traded_quantity, execution_price);
-		Exchange::add_trade(trade);
+		Timestamp executed_timestamp = current_timestamp();
+		Trade trade(trade_id, stock_id, buyer->get_user_id(), seller->get_user_id(), traded_quantity, execution_price, executed_timestamp);
+		Stock* stock = Exchange::get_stock(stock_id);
+		if (stock != nullptr) {
+			stock->add_trade(trade);
+			stock->update_candle(trade);
+		}
 	}
 }
