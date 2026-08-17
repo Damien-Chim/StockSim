@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <optional>
+#include <mutex>
 #include "Stock.hpp"
 #include "User.hpp"
 #include "Order.hpp"
@@ -16,6 +17,7 @@ private:
 	static int next_trade_id;
 	static int next_user_id;
 	static int next_stock_id;
+	static std::mutex exchange_mutex;
 
 public:
 	static std::string generate_order_id();

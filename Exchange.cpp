@@ -4,6 +4,8 @@
 #include "Trade.hpp"
 #include <optional>
 #include <string>
+#include <mutex>
+
 int Exchange::next_order_id = 0;
 int Exchange::next_trade_id = 0;
 int Exchange::next_user_id = 0;
@@ -12,6 +14,7 @@ std::unordered_map<std::string, Stock> Exchange::stock_map;
 std::unordered_map<std::string, User> Exchange::user_map;
 std::unordered_map<std::string, Order> Exchange::order_map;
 std::unordered_map<std::string, Trade> Exchange::trade_map;
+std::mutex Exchange::exchange_mutex;
 
 std::string Exchange::generate_order_id() {
 	std::string id = "ORDER_" + std::to_string(next_order_id);
@@ -26,18 +29,21 @@ std::string Exchange::generate_trade_id() {
 }
 
 std::string Exchange::generate_user_id() {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
 	std::string id = "USER_" + std::to_string(next_user_id);
 	next_user_id += 1;
 	return id;
 }
 
 std::string Exchange::generate_stock_id() {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
 	std::string id = "STOCK_" + std::to_string(next_stock_id);
 	next_stock_id += 1;
 	return id;
 }
 
 bool Exchange::buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price) {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
 	auto user_it = user_map.find(user_id);
 	if (user_it == user_map.end()) { return false; }
 
@@ -58,6 +64,7 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 }
 
 bool Exchange::sell_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price) {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
 	auto user_it = user_map.find(user_id);
 	if (user_it == user_map.end()) { return false; }
 
@@ -78,6 +85,7 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 }
 
 bool Exchange::cancel_request(const std::string& user_id, const std::string& order_id) {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
 	User* user = get_user(user_id);
 	if (user == nullptr) { return false; }
 	Order* order = get_order(order_id);
@@ -121,16 +129,19 @@ Order* Exchange::get_order(const std::string& order_id) {
 }
 
 void Exchange::add_trade(Trade& trade) {
+	// std::lock_guard<std::mutex> lock(exchange_mutex);
 	const std::string trade_id = trade.get_trade_id();
 	trade_map.emplace(trade_id, trade);
 }
 
 void Exchange::add_user(User user) {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
 	const std::string user_id = user.get_user_id();
 	user_map.emplace(user_id, user);
 }
 
 void Exchange::add_stock(Stock stock) {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
 	const std::string stock_id = stock.get_stock_id();
 	stock_map.emplace(stock_id, stock);
 }
