@@ -148,6 +148,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Candle.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Exchange.cpp" />
     <ClCompile Include="Order.cpp">
@@ -163,6 +164,7 @@
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Candle.hpp" />
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="Exchange.hpp" />
     <ClInclude Include="OrderBook.hpp" />
