@@ -3,6 +3,9 @@
 #include <unordered_map>
 #include "OrderBook.hpp"
 #include "Order.hpp"
+#include "Time.hpp"
+#include "Candle.hpp"
+#include "Trade.hpp"
 
 class Stock {
 private:
@@ -11,6 +14,8 @@ private:
 	std::string stock_symbol;
 	int market_price;
 	OrderBook order_book;
+	std::vector<Trade> trade_history;
+	std::map<Timestamp, Candle> candles;
 
 public:
 	Stock(std::string stock_id, std::string stock_name, std::string stock_symbol, int market_price);
