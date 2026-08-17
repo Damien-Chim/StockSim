@@ -104,6 +104,7 @@ void OrderBook::match_orders() {
 		if (stock != nullptr) {
 			stock->add_trade(trade);
 			stock->update_candle(trade);
+			stock->set_market_price(execution_price);
 		}
 	}
 }

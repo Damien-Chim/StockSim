@@ -27,4 +27,5 @@ public:
 	OrderBook& get_order_book();
 	void add_trade(const Trade& new_trade);
 	void update_candle(const Trade& new_trade);
+	void set_market_price(int new_market_price);
 };

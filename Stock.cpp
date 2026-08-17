@@ -75,3 +75,7 @@ void Stock::update_candle(const Trade& new_trade) {
 		it->second.colour = Colour::RED;
 	}
 }
+
+void Stock::set_market_price(int new_market_price) {
+	market_price = new_market_price;
+}
