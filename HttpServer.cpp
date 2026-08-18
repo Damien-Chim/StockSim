@@ -133,8 +133,21 @@ private:
                 send_json_response(http::status::not_found, { {"error", "Stock not found"} });
                 return;
             }
+            json candles = json::array();
+            for (const auto& [timestamp, candle] : stock->get_candles()) {
+                json object = {
+                    {"start_time", candle.start_time},
+                    {"open", candle.open},
+                    {"high", candle.high},
+                    {"low", candle.low},
+                    {"close", candle.close},
+                    {"volumne", candle.volume},
+                };
+                
+                candles.push_back(object);
+            }
 
-            send_json_response(http::status::ok, { {"message", "Stock found"} });
+            send_json_response(http::status::ok, candles);
         }
 
         else if (target.ends_with("/trades")) {
