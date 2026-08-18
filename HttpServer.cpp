@@ -279,6 +279,42 @@ private:
                 << object.dump();
         }
 
+        else if (target.starts_with("/api/users/")) {
+            std::size_t user_id_start = 11;
+            std::size_t user_id_length = target.size() - 11;
+            std::string user_id = target.substr(user_id_start, user_id_length);
+
+            User* user = Exchange::get_user(user_id);
+            if (user == nullptr) {
+                response_.result(http::status::not_found);
+                response_.set(
+                    http::field::content_type,
+                    "application/json"
+                );
+
+                boost::beast::ostream(response_.body())
+                    << R"({"error":"User not found"})";
+
+                return;
+            }
+
+            json object = {
+                {"user_id", user->get_user_id()},
+                {"username", user->get_username()},
+                {"available_cash", user->get_available_cash()},
+                {"reserved_cash", user->get_reserved_cash()}
+            };
+
+            response_.result(http::status::ok);
+            response_.set(
+                http::field::content_type,
+                "application/json"
+            );
+
+            boost::beast::ostream(response_.body())
+                << object.dump();
+        }
+
         else
         {
             response_.result(http::status::not_found);
