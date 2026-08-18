@@ -141,7 +141,7 @@ private:
                     {"high", candle.high},
                     {"low", candle.low},
                     {"close", candle.close},
-                    {"volumne", candle.volume},
+                    {"volume", candle.volume},
                 };
                 
                 candles.push_back(object);
