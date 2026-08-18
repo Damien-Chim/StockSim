@@ -340,6 +340,38 @@ private:
             }
         }
 
+        else if (target == "/api/orders/cancel") {
+            try {
+                std::string body = boost::beast::buffers_to_string(request_.body().data());
+
+                json data = json::parse(body);
+
+                if (!data.contains("order_id")) {
+                    send_json_response(http::status::bad_request, { {"error", "Missing required fields"} });
+                    return;
+                }
+
+                std::string order_id = data["order_id"].get<std::string>();
+                
+                // Temporary until proper sessions exist
+                const std::string user_id = "USER_0";
+                User* user = Exchange::get_user(user_id);
+
+                bool success = user->cancel_trade(order_id);
+
+                if (!success) {
+                    send_json_response(http::status::bad_request, { {"error", "Order could not be cancelled"} });
+                    return;
+                }
+
+                send_json_response(http::status::ok, { {"message", "Cancel request successful"} });
+            }
+
+            catch (const json::exception&) {
+                send_json_response(http::status::bad_request, { {"error", "Invalid JSON body"} });
+            }
+        }
+
         else {
             send_json_response(http::status::not_found, { {"error", "Endpoint not found"} });
         }

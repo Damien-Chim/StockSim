@@ -18,6 +18,7 @@ import OrderTicket from "./components/OrderTicket";
 import RecentTrades from "./components/RecentTrades";
 import StockSidebar from "./components/StockSidebar";
 import UserPanel from "./components/UserPanel";
+import CancelOrder from "./components/CancelOrder";
 
 export default function App() {
     const [stocks, setStocks] = useState<StockSummary[]>([]);
@@ -249,6 +250,10 @@ export default function App() {
                                 onOrderComplete={
                                     refreshAfterOrder
                                 }
+                            />
+
+                            <CancelOrder
+                                onCancelComplete={refreshAfterOrder}
                             />
 
                             <UserPanel

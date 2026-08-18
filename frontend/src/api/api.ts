@@ -76,3 +76,12 @@ export function sellStock(stockId: string, quantity: number, limitPrice: number)
     body: JSON.stringify({ stock_id: stockId, quantity, limit_price: limitPrice }),
   });
 }
+
+export function cancelOrder(orderId: string) {
+    return request<{ message: string }>("/api/orders/cancel", {
+        method: "POST",
+        body: JSON.stringify({
+            order_id: orderId,
+        }),
+    });
+}
