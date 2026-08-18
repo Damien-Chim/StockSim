@@ -24,12 +24,16 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include <unordered_map>
+#include <nlohmann/json.hpp>
 #include "Stock.hpp"
 #include "Exchange.hpp"
 
 namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
+
+using json = nlohmann::json;            // from <nlohmann/json.hpp>
 
 namespace my_program_state
 {
@@ -173,6 +177,30 @@ private:
 
             boost::beast::ostream(response_.body())
                 << R"({"message":"Stock found"})";
+        }
+
+        else if (target == "/api/stocks") {
+            std::unordered_map<std::string, Stock> stock_map = Exchange::get_stocks();
+            json j_stocks = json::array();
+            for (const auto& [k, v] : stock_map) {
+                json object = {
+                    {"stock_id", v.get_stock_id()},
+                    {"stock_name", v.get_stock_name()},
+                    {"stock_symbol", v.get_stock_symbol()},
+                    {"market_price", v.get_market_price()}
+                };
+
+                j_stocks.push_back(object);
+            }
+            
+            response_.result(http::status::ok);
+            response_.set(
+                http::field::content_type,
+                "application/json"
+            );
+
+            boost::beast::ostream(response_.body())
+                << j_stocks.dump();
         }
 
         else
