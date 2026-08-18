@@ -115,6 +115,114 @@ private:
             << body.dump();
     }
 
+    std::string extract_id(const std::string& target, const std::string& prefix, const std::string& suffix) {
+        if (!target.starts_with(prefix) || !target.ends_with(suffix)) {
+            return "";
+        }
+
+        std::size_t start_position = prefix.size();
+        std::size_t id_length = target.size() - prefix.size() - suffix.size();
+        return target.substr(start_position, id_length);
+    }
+
+    void handle_stocks_request(const std::string& target) {
+        if (target.ends_with("/candles")) {
+            std::string stock_id = extract_id(target, "/api/stocks/", "/candles");
+            Stock* stock = Exchange::get_stock(stock_id);
+            if (stock == nullptr) {
+                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
+                return;
+            }
+
+            send_json_response(http::status::ok, { {"message", "Stock found"} });
+        }
+
+        else if (target.ends_with("/trades")) {
+            std::string stock_id = extract_id(target, "/api/stocks/", "/trades");
+            Stock* stock = Exchange::get_stock(stock_id);
+            if (stock == nullptr) {
+                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
+                return;
+            }
+
+            json trades = json::array();
+            for (const auto& trade : stock->get_trade_history()) {
+                json object = {
+                    {"timestamp", trade.get_executed_timestamp()},
+                    {"quantity", trade.get_quantity()},
+                    {"price", trade.get_price()}
+                };
+
+                trades.push_back(object);
+            }
+
+            send_json_response(http::status::ok, trades);
+        }
+
+        else if (target.ends_with("/basic_info")) {
+            std::string stock_id = extract_id(target, "/api/stocks/", "/basic_info");
+            Stock* stock = Exchange::get_stock(stock_id);
+            if (stock == nullptr) {
+                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
+                return;
+            }
+
+            json basic_info = {
+                {"stock_id", stock->get_stock_id()},
+                {"stock_name", stock->get_stock_name()},
+                {"stock_symbol", stock->get_stock_symbol()},
+                {"market_price", stock->get_market_price()}
+            };
+
+            send_json_response(http::status::ok, basic_info);
+        }
+
+        else if (target.ends_with("/stocks")) {
+            std::unordered_map<std::string, Stock> stock_map = Exchange::get_stocks();
+            json stocks = json::array();
+            for (const auto& [k, v] : stock_map) {
+                json object = {
+                    {"stock_id", v.get_stock_id()},
+                    {"stock_name", v.get_stock_name()},
+                    {"stock_symbol", v.get_stock_symbol()},
+                    {"market_price", v.get_market_price()}
+                };
+
+                stocks.push_back(object);
+            }
+
+            send_json_response(http::status::ok, stocks);
+        }
+
+        else {
+            send_json_response(http::status::not_found, { {"error", "Endpoint not found"} });
+        }
+    }
+
+    void handle_users_request(const std::string& target) {
+        if (target.ends_with("/basic_info")) {
+            std::string user_id = extract_id(target, "/api/users/", "/basic_info");
+            User* user = Exchange::get_user(user_id);
+            if (user == nullptr) {
+                send_json_response(http::status::not_found, { {"error", "User not found"} });
+                return;
+            }
+
+            json object = {
+                {"user_id", user->get_user_id()},
+                {"username", user->get_username()},
+                {"available_cash", user->get_available_cash()},
+                {"reserved_cash", user->get_reserved_cash()}
+            };
+
+            send_json_response(http::status::ok, object);
+        }
+
+        else {
+            send_json_response(http::status::not_found, { {"error", "Endpoint not found"} });
+        }
+    }
+
     // Determine what needs to be done with the request message.
     void
         process_request()
@@ -149,116 +257,17 @@ private:
     void create_response()
     {
         std::string target(request_.target());
-        std::string prefix = "/api/stocks/";
-        std::string suffix = "/candles";
         std::cout << target << std::endl;
-        if (target == "/api/test")
-        {
-            response_.result(http::status::ok);
-            response_.set(
-                http::field::content_type,
-                "application/json"
-            );
-
-            boost::beast::ostream(response_.body())
-                << R"({"message":"StockSim HTTP server works"})";
+        if (target == "/api/test") {
+            send_json_response(http::status::ok, { {"message", "the http server works"} });
         }
 
-        else if (target.starts_with(prefix) && target.ends_with(suffix)) {
-            std::size_t stock_id_start = prefix.size();
-            std::size_t stock_id_length = target.size() - prefix.size() - suffix.size();
-            std::string stock_id = target.substr(stock_id_start, stock_id_length);
-            Stock* stock = Exchange::get_stock(stock_id);
-            if (stock == nullptr) {
-                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
-                return;
-            }
-
-            send_json_response(http::status::ok, { {"message", "Stock found"} });
+        else if (target.starts_with("/api/stocks")) {
+            handle_stocks_request(target);
         }
 
-        else if (target.starts_with("/api/stocks/") && target.ends_with("/trades")) {
-            std::size_t stock_id_start = 12;
-            std::size_t stock_id_length = target.size() - 12 - 7;
-            std::string stock_id = target.substr(stock_id_start, stock_id_length);
-            
-            Stock* stock = Exchange::get_stock(stock_id);
-            if (stock == nullptr) {
-                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
-                return;
-            }
-
-            json trades = json::array();
-            for (const auto& trade : stock->get_trade_history()) {
-                json object = {
-                    {"timestamp", trade.get_executed_timestamp()},
-                    {"quantity", trade.get_quantity()},
-                    {"price", trade.get_price()}
-                };
-
-                trades.push_back(object);
-            }
-
-            send_json_response(http::status::ok, trades);
-        }
-
-        else if (target == "/api/stocks") {
-            std::unordered_map<std::string, Stock> stock_map = Exchange::get_stocks();
-            json j_stocks = json::array();
-            for (const auto& [k, v] : stock_map) {
-                json object = {
-                    {"stock_id", v.get_stock_id()},
-                    {"stock_name", v.get_stock_name()},
-                    {"stock_symbol", v.get_stock_symbol()},
-                    {"market_price", v.get_market_price()}
-                };
-
-                j_stocks.push_back(object);
-            }
-            
-            send_json_response(http::status::ok
-                , j_stocks);
-        }
-
-        else if (target.starts_with("/api/stocks/")) {
-            std::size_t stock_id_start = 12;
-            std::size_t stock_id_length = target.size() - 12;
-            std::string stock_id = target.substr(stock_id_start, stock_id_length);
-            Stock* stock = Exchange::get_stock(stock_id);
-            if (stock == nullptr) {
-                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
-                return;
-            }
-
-            json object = {
-                {"stock_id", stock->get_stock_id()},
-                {"stock_name", stock->get_stock_name()},
-                {"stock_symbol", stock->get_stock_symbol()},
-                {"market_price", stock->get_market_price()}
-            };
-
-            send_json_response(http::status::ok, object);
-        }
-
-        else if (target.starts_with("/api/users/")) {
-            std::size_t user_id_start = 11;
-            std::size_t user_id_length = target.size() - 11;
-            std::string user_id = target.substr(user_id_start, user_id_length);
-
-            User* user = Exchange::get_user(user_id);
-            if (user == nullptr) {
-                send_json_response(http::status::not_found, { {"error", "User not found"} });
-                return;
-            }
-
-            json object = {
-                {"user_id", user->get_user_id()},
-                {"username", user->get_username()},
-                {"available_cash", user->get_available_cash()},
-                {"reserved_cash", user->get_reserved_cash()}
-            };
-
-            send_json_response(http::status::ok, object);
+        else if (target.starts_with("/api/users")) {
+            handle_users_request(target);
         }
 
         else {
