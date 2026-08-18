@@ -104,6 +104,17 @@ private:
             });
     }
 
+    void send_json_response(http::status status, const json& body) {
+        response_.result(status);
+        response_.set(
+            http::field::content_type,
+            "application/json"
+        );
+
+        boost::beast::ostream(response_.body())
+            << body.dump();
+    }
+
     // Determine what needs to be done with the request message.
     void
         process_request()
@@ -159,25 +170,11 @@ private:
             std::string stock_id = target.substr(stock_id_start, stock_id_length);
             Stock* stock = Exchange::get_stock(stock_id);
             if (stock == nullptr) {
-                response_.result(http::status::not_found);
-                response_.set(
-                    http::field::content_type,
-                    "application/json"
-                );
-
-                boost::beast::ostream(response_.body())
-                    << R"({"error":"Stock not found"})";
-
+                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
                 return;
             }
-            response_.result(http::status::ok);
-            response_.set(
-                http::field::content_type,
-                "application/json"
-            );
 
-            boost::beast::ostream(response_.body())
-                << R"({"message":"Stock found"})";
+            send_json_response(http::status::ok, { {"message", "Stock found"} });
         }
 
         else if (target.starts_with("/api/stocks/") && target.ends_with("/trades")) {
@@ -187,15 +184,7 @@ private:
             
             Stock* stock = Exchange::get_stock(stock_id);
             if (stock == nullptr) {
-                response_.result(http::status::not_found);
-                response_.set(
-                    http::field::content_type,
-                    "application/json"
-                );
-
-                boost::beast::ostream(response_.body())
-                    << R"({"error":"Stock not found"})";
-
+                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
                 return;
             }
 
@@ -210,14 +199,7 @@ private:
                 trades.push_back(object);
             }
 
-            response_.result(http::status::ok);
-            response_.set(
-                http::field::content_type,
-                "application/json"
-            );
-
-            boost::beast::ostream(response_.body())
-                << trades.dump();
+            send_json_response(http::status::ok, trades);
         }
 
         else if (target == "/api/stocks") {
@@ -234,14 +216,8 @@ private:
                 j_stocks.push_back(object);
             }
             
-            response_.result(http::status::ok);
-            response_.set(
-                http::field::content_type,
-                "application/json"
-            );
-
-            boost::beast::ostream(response_.body())
-                << j_stocks.dump();
+            send_json_response(http::status::ok
+                , j_stocks);
         }
 
         else if (target.starts_with("/api/stocks/")) {
@@ -250,15 +226,7 @@ private:
             std::string stock_id = target.substr(stock_id_start, stock_id_length);
             Stock* stock = Exchange::get_stock(stock_id);
             if (stock == nullptr) {
-                response_.result(http::status::not_found);
-                response_.set(
-                    http::field::content_type,
-                    "application/json"
-                );
-
-                boost::beast::ostream(response_.body())
-                    << R"({"error":"Stock not found"})";
-
+                send_json_response(http::status::not_found, { {"error", "Stock not found"} });
                 return;
             }
 
@@ -269,14 +237,7 @@ private:
                 {"market_price", stock->get_market_price()}
             };
 
-            response_.result(http::status::ok);
-            response_.set(
-                http::field::content_type,
-                "application/json"
-            );
-
-            boost::beast::ostream(response_.body())
-                << object.dump();
+            send_json_response(http::status::ok, object);
         }
 
         else if (target.starts_with("/api/users/")) {
@@ -286,15 +247,7 @@ private:
 
             User* user = Exchange::get_user(user_id);
             if (user == nullptr) {
-                response_.result(http::status::not_found);
-                response_.set(
-                    http::field::content_type,
-                    "application/json"
-                );
-
-                boost::beast::ostream(response_.body())
-                    << R"({"error":"User not found"})";
-
+                send_json_response(http::status::not_found, { {"error", "User not found"} });
                 return;
             }
 
@@ -305,26 +258,11 @@ private:
                 {"reserved_cash", user->get_reserved_cash()}
             };
 
-            response_.result(http::status::ok);
-            response_.set(
-                http::field::content_type,
-                "application/json"
-            );
-
-            boost::beast::ostream(response_.body())
-                << object.dump();
+            send_json_response(http::status::ok, object);
         }
 
-        else
-        {
-            response_.result(http::status::not_found);
-            response_.set(
-                http::field::content_type,
-                "text/plain"
-            );
-
-            boost::beast::ostream(response_.body())
-                << "Not found\r\n";
+        else {
+            send_json_response(http::status::not_found, { {"error", "Endpoint not found"} });
         }
     }
 
