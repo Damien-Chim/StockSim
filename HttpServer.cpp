@@ -255,6 +255,78 @@ private:
         }
     }
 
+    void handle_orders_request(const std::string& target) {
+        if (target == "/api/orders/buy") {
+            try {
+                std::string body = boost::beast::buffers_to_string(request_.body().data());
+                
+                json data = json::parse(body);
+
+                if (!data.contains("stock_id") || !data.contains("quantity") || !data.contains("limit_price")) {
+                    send_json_response(http::status::bad_request, { {"error", "Missing required fields"} });
+                    return;
+                }
+
+                std::string stock_id = data["stock_id"].get<std::string>();
+                int quantity = data["quantity"].get<int>();
+                int limit_price = data["limit_price"].get<int>();
+
+                // Temporary until proper sessions exist
+                const std::string user_id = "USER_0";
+
+                bool success = Exchange::buy_request(user_id, stock_id, quantity, limit_price);
+
+                if (!success) {
+                    send_json_response(http::status::bad_request, { {"error", "Buy order could not be placed"} });
+                    return;
+                }
+
+                send_json_response(http::status::ok, {{"message", "Buy order placed successfully"}});
+            }
+
+            catch (const json::exception&) {
+                send_json_response(http::status::bad_request, { {"error", "Invalid JSON body"} });
+            }
+        }
+
+        else if (target == "/api/orders/sell") {
+            try {
+                std::string body = boost::beast::buffers_to_string(request_.body().data());
+
+                json data = json::parse(body);
+
+                if (!data.contains("stock_id") || !data.contains("quantity") || !data.contains("limit_price")) {
+                    send_json_response(http::status::bad_request, { {"error", "Missing required fields"} });
+                    return;
+                }
+
+                std::string stock_id = data["stock_id"].get<std::string>();
+                int quantity = data["quantity"].get<int>();
+                int limit_price = data["limit_price"].get<int>();
+
+                // Temporary until proper sessions exist
+                const std::string user_id = "USER_0";
+
+                bool success = Exchange::sell_request(user_id, stock_id, quantity, limit_price);
+
+                if (!success) {
+                    send_json_response(http::status::bad_request, { {"error", "Sell order could not be placed"} });
+                    return;
+                }
+
+                send_json_response(http::status::ok, { {"message", "Sell order placed successfully"} });
+            }
+
+            catch (const json::exception&) {
+                send_json_response(http::status::bad_request, { {"error", "Invalid JSON body"} });
+            }
+        }
+
+        else {
+            send_json_response(http::status::not_found, { {"error", "Endpoint not found"} });
+        }
+    }
+
     // Determine what needs to be done with the request message.
     void
         process_request()
@@ -265,6 +337,12 @@ private:
         switch (request_.method())
         {
         case http::verb::get:
+            response_.result(http::status::ok);
+            response_.set(http::field::server, "Beast");
+            create_response();
+            break;
+
+        case http::verb::post:
             response_.result(http::status::ok);
             response_.set(http::field::server, "Beast");
             create_response();
