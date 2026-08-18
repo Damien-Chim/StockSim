@@ -203,6 +203,41 @@ private:
                 << j_stocks.dump();
         }
 
+        else if (target.starts_with("/api/stocks/")) {
+            std::size_t stock_id_start = 12;
+            std::size_t stock_id_length = target.size() - 12;
+            std::string stock_id = target.substr(stock_id_start, stock_id_length);
+            Stock* stock = Exchange::get_stock(stock_id);
+            if (stock == nullptr) {
+                response_.result(http::status::not_found);
+                response_.set(
+                    http::field::content_type,
+                    "application/json"
+                );
+
+                boost::beast::ostream(response_.body())
+                    << R"({"error":"Stock not found"})";
+
+                return;
+            }
+
+            json object = {
+                {"stock_id", stock->get_stock_id()},
+                {"stock_name", stock->get_stock_name()},
+                {"stock_symbol", stock->get_stock_symbol()},
+                {"market_price", stock->get_market_price()}
+            };
+
+            response_.result(http::status::ok);
+            response_.set(
+                http::field::content_type,
+                "application/json"
+            );
+
+            boost::beast::ostream(response_.body())
+                << object.dump();
+        }
+
         else
         {
             response_.result(http::status::not_found);
