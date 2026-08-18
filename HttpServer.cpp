@@ -289,8 +289,9 @@ private:
 
                 // Temporary until proper sessions exist
                 const std::string user_id = "USER_0";
+                User* user = Exchange::get_user(user_id);
 
-                bool success = Exchange::buy_request(user_id, stock_id, quantity, limit_price);
+                bool success = user->buy_stock(stock_id, quantity, limit_price);
 
                 if (!success) {
                     send_json_response(http::status::bad_request, { {"error", "Buy order could not be placed"} });
@@ -322,8 +323,9 @@ private:
 
                 // Temporary until proper sessions exist
                 const std::string user_id = "USER_0";
+                User* user = Exchange::get_user(user_id);
 
-                bool success = Exchange::sell_request(user_id, stock_id, quantity, limit_price);
+                bool success = user->sell_stock(stock_id, quantity, limit_price);
 
                 if (!success) {
                     send_json_response(http::status::bad_request, { {"error", "Sell order could not be placed"} });
