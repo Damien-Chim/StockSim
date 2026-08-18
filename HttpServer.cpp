@@ -212,20 +212,39 @@ private:
         }
     }
 
-    void handle_users_request(const std::string& target) {
-        if (target.ends_with("/basic_info")) {
-            std::string user_id = extract_id(target, "/api/users/", "/basic_info");
-            User* user = Exchange::get_user(user_id);
-            if (user == nullptr) {
-                send_json_response(http::status::not_found, { {"error", "User not found"} });
-                return;
+    void handle_me_request(const std::string& target) {
+        // TEMPORARY UNTIL SESSION HANDLING EXISTS
+        const std::string user_id = "USER_0";
+        User* user = Exchange::get_user(user_id);
+        if (user == nullptr) {
+            send_json_response(http::status::not_found, { {"error", "User not found"} });
+            return;
+        }
+        
+        if (target.ends_with("/me")) {
+            json available_stocks = json::array();
+            for (const auto& [stock_id, quantity] : user->get_available_stocks()) {
+                available_stocks.push_back({ 
+                    {"stock_id", stock_id}, 
+                    {"quantity", quantity} 
+                });
+            }
+
+            json reserved_stocks = json::array();
+            for (const auto& [stock_id, quantity] : user->get_reserved_stocks()) {
+                reserved_stocks.push_back({
+                    {"stock_id", stock_id},
+                    {"quantity", quantity}
+                });
             }
 
             json object = {
                 {"user_id", user->get_user_id()},
                 {"username", user->get_username()},
                 {"available_cash", user->get_available_cash()},
-                {"reserved_cash", user->get_reserved_cash()}
+                {"reserved_cash", user->get_reserved_cash()},
+                {"available_stocks", available_stocks},
+                {"reserved_stocks", reserved_stocks}
             };
 
             send_json_response(http::status::ok, object);
@@ -279,8 +298,8 @@ private:
             handle_stocks_request(target);
         }
 
-        else if (target.starts_with("/api/users")) {
-            handle_users_request(target);
+        else if (target.starts_with("/api/me")) {
+            handle_me_request(target);
         }
 
         else {
