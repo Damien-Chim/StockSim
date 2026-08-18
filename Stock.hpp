@@ -29,4 +29,5 @@ public:
 	void update_candle(const Trade& new_trade);
 	void set_market_price(int new_market_price);
 	const std::map<Timestamp, Candle>& get_candles() const;
+	const std::vector<Trade> get_trade_history() const;
 };

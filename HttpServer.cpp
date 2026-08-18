@@ -28,6 +28,7 @@
 #include <nlohmann/json.hpp>
 #include "Stock.hpp"
 #include "Exchange.hpp"
+#include "Trade.hpp"
 
 namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
@@ -177,6 +178,46 @@ private:
 
             boost::beast::ostream(response_.body())
                 << R"({"message":"Stock found"})";
+        }
+
+        else if (target.starts_with("/api/stocks/") && target.ends_with("/trades")) {
+            std::size_t stock_id_start = 12;
+            std::size_t stock_id_length = target.size() - 12 - 7;
+            std::string stock_id = target.substr(stock_id_start, stock_id_length);
+            
+            Stock* stock = Exchange::get_stock(stock_id);
+            if (stock == nullptr) {
+                response_.result(http::status::not_found);
+                response_.set(
+                    http::field::content_type,
+                    "application/json"
+                );
+
+                boost::beast::ostream(response_.body())
+                    << R"({"error":"Stock not found"})";
+
+                return;
+            }
+
+            json trades = json::array();
+            for (const auto& trade : stock->get_trade_history()) {
+                json object = {
+                    {"timestamp", trade.get_executed_timestamp()},
+                    {"quantity", trade.get_quantity()},
+                    {"price", trade.get_price()}
+                };
+
+                trades.push_back(object);
+            }
+
+            response_.result(http::status::ok);
+            response_.set(
+                http::field::content_type,
+                "application/json"
+            );
+
+            boost::beast::ostream(response_.body())
+                << trades.dump();
         }
 
         else if (target == "/api/stocks") {

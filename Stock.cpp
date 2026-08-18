@@ -83,3 +83,7 @@ void Stock::set_market_price(int new_market_price) {
 const std::map<Timestamp, Candle>& Stock::get_candles() const {
 	return candles;
 }
+
+const std::vector<Trade> Stock::get_trade_history() const {
+	return trade_history;
+}
