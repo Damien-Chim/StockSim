@@ -106,9 +106,25 @@ private:
 
     void send_json_response(http::status status, const json& body) {
         response_.result(status);
+
         response_.set(
             http::field::content_type,
             "application/json"
+        );
+
+        response_.set(
+            http::field::access_control_allow_origin,
+            "http://localhost:5173"
+        );
+
+        response_.set(
+            http::field::access_control_allow_methods,
+            "GET, POST, OPTIONS"
+        );
+
+        response_.set(
+            http::field::access_control_allow_headers,
+            "Content-Type"
         );
 
         boost::beast::ostream(response_.body())
@@ -346,6 +362,26 @@ private:
             response_.result(http::status::ok);
             response_.set(http::field::server, "Beast");
             create_response();
+            break;
+
+        case http::verb::options:
+            response_.result(http::status::no_content);
+
+            response_.set(
+                http::field::access_control_allow_origin,
+                "http://localhost:5173"
+            );
+
+            response_.set(
+                http::field::access_control_allow_methods,
+                "GET, POST, OPTIONS"
+            );
+
+            response_.set(
+                http::field::access_control_allow_headers,
+                "Content-Type"
+            );
+
             break;
 
         default:
