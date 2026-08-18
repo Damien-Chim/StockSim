@@ -380,6 +380,10 @@ private:
             handle_me_request(target);
         }
 
+        else if (target.starts_with("/api/orders")) {
+            handle_orders_request(target);
+        }
+
         else {
             send_json_response(http::status::not_found, { {"error", "Endpoint not found"} });
         }
