@@ -13,6 +13,7 @@ private:
 	long long reserved_cash{ 0 };
 	std::unordered_map<std::string, int> available_stocks{};
 	std::unordered_map<std::string, int> reserved_stocks{};
+	std::vector<std::string> orders{};
 
 public:
 	User(std::string user_id, std::string username, long long cash_balance);
@@ -51,5 +52,7 @@ public:
 
 	void remove_reserved_stocks(const std::unordered_map<std::string, int>& stocks_to_remove);
 
+	void add_order(std::string order_id);
 
+	const std::vector<std::string> get_orders() const;
 };

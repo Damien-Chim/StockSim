@@ -85,3 +85,20 @@ export function cancelOrder(orderId: string) {
         }),
     });
 }
+
+export type OrderInfo = {
+    order_id: string;
+    stock: string;
+    side: "BUY" | "SELL";
+    quantity: number;
+    limit_price: number;
+    status:
+    | "OPEN"
+    | "PARTIALLY_FILLED"
+    | "FILLED"
+    | "CANCELED";
+};
+
+export function getMyOrders() {
+    return request<OrderInfo[]>("/api/me/orders");
+}

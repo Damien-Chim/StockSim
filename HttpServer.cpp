@@ -141,6 +141,36 @@ private:
         return target.substr(start_position, id_length);
     }
 
+    std::string side_to_string(Side side) {
+        switch (side) {
+        case Side::BUY:
+            return "BUY";
+
+        case Side::SELL:
+            return "SELL";
+        }
+
+        return "UNKNOWN";
+    }
+
+    std::string status_to_string(Status status) {
+        switch (status) {
+        case Status::OPEN:
+            return "OPEN";
+
+        case Status::PARTIALLY_FILLED:
+            return "PARTIALLY_FILLED";
+
+        case Status::FILLED:
+            return "FILLED";
+
+        case Status::CANCELED:
+            return "CANCELED";
+        }
+
+        return "UNKNOWN";
+    }
+
     void handle_stocks_request(const std::string& target) {
         if (target.ends_with("/candles")) {
             std::string stock_id = extract_id(target, "/api/stocks/", "/candles");
@@ -264,6 +294,26 @@ private:
             };
 
             send_json_response(http::status::ok, object);
+        }
+
+        else if (target.ends_with("/me/orders")) {
+            json my_orders = json::array();
+            for (const auto& order_id : user->get_orders()) {
+                Order* order = Exchange::get_order(order_id);
+                std::string stock_symbol = Exchange::get_stock(order->get_stock_id())->get_stock_symbol();
+                json object = {
+                    {"order_id", order_id},
+                    {"stock", stock_symbol},
+                    {"side", side_to_string(order->get_side())},
+                    {"quantity", order->get_quantity()},
+                    {"limit_price", order->get_limit_price()},
+                    {"status", status_to_string(order->get_status())}
+                };
+
+                my_orders.push_back(object);
+            }
+
+            send_json_response(http::status::ok, my_orders);
         }
 
         else {

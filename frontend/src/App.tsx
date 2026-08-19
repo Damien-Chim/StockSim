@@ -4,11 +4,13 @@ import "./App.css";
 import {
     getCandles,
     getMe,
+    getMyOrders,
     getStockBasicInfo,
     getStocks,
     getTrades,
     type Candle,
     type Me,
+    type OrderInfo,
     type StockSummary,
     type Trade,
 } from "./api/api";
@@ -19,6 +21,7 @@ import RecentTrades from "./components/RecentTrades";
 import StockSidebar from "./components/StockSidebar";
 import UserPanel from "./components/UserPanel";
 import CancelOrder from "./components/CancelOrder";
+import MyOrders from "./components/MyOrders";
 
 export default function App() {
     const [stocks, setStocks] = useState<StockSummary[]>([]);
@@ -30,12 +33,29 @@ export default function App() {
     const [trades, setTrades] = useState<Trade[]>([]);
     const [me, setMe] = useState<Me | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [orders, setOrders] = useState<OrderInfo[]>([]);
 
     // Initial application load
     useEffect(() => {
         let cancelled = false;
 
         async function loadInitialData() {
+            try {
+                const userData = await getMe();
+                const orderData = await getMyOrders();
+
+                if (!cancelled) {
+                    setMe(userData);
+                    setOrders(orderData);
+                }
+            }
+            catch (e) {
+                console.error(
+                    "Failed to load account data:",
+                    e
+                );
+            }
+
             try {
                 const stockData = await getStocks();
 
@@ -140,13 +160,15 @@ export default function App() {
                 basic,
                 candleData,
                 tradeData,
-                userData
+                userData,
+                orderData,
             ] = await Promise.all([
                 getStocks(),
                 getStockBasicInfo(selectedId),
                 getCandles(selectedId),
                 getTrades(selectedId),
                 getMe(),
+                getMyOrders(),
             ]);
 
             setStocks(stockData);
@@ -154,6 +176,7 @@ export default function App() {
             setCandles(candleData);
             setTrades(tradeData);
             setMe(userData);
+            setOrders(orderData);
         }
         catch (e) {
             setError(
@@ -265,6 +288,12 @@ export default function App() {
                         <RecentTrades
                             trades={trades}
                         />
+
+                        <MyOrders
+                            orders={orders}
+                            onCancelComplete={refreshAfterOrder}
+                        />
+
                     </div>
                 ) : (
                     <div className="loading">

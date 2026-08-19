@@ -123,3 +123,11 @@ void User::remove_reserved_stocks(const std::unordered_map<std::string, int>& st
 		}
 	}
 }
+
+void User::add_order(std::string order_id) {
+	orders.push_back(order_id);
+}
+
+const std::vector<std::string> User::get_orders() const {
+	return orders;
+}

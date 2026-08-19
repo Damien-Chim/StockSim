@@ -394,3 +394,102 @@ input {
         opacity: 0.5;
         cursor: not-allowed;
     }
+
+
+.orders-panel {
+    grid-column: 1 / -1;
+    padding: 0;
+    overflow: hidden;
+}
+
+    .orders-panel .panel-heading {
+        padding: 14px 16px;
+        margin: 0;
+    }
+
+.orders-head,
+.order-row {
+    display: grid;
+    grid-template-columns: 1fr 0.7fr 0.6fr 0.8fr 1.3fr 0.7fr;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 16px;
+}
+
+.orders-head {
+    border-top: 1px solid #202735;
+    border-bottom: 1px solid #202735;
+    color: #596273;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
+.order-row {
+    border-bottom: 1px solid #171d27;
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+    .order-row strong {
+        color: #e5e7eb;
+    }
+
+.order-side {
+    font-weight: 800;
+}
+
+.buy-side {
+    color: #4ade80;
+}
+
+.sell-side {
+    color: #f87171;
+}
+
+.order-status {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .05em;
+}
+
+    .order-status.open {
+        color: #60a5fa;
+    }
+
+    .order-status.partially_filled {
+        color: #facc15;
+    }
+
+    .order-status.filled {
+        color: #4ade80;
+    }
+
+    .order-status.canceled {
+        color: #6b7280;
+    }
+
+.cancel-button {
+    border: 1px solid #ef4444;
+    border-radius: 6px;
+    padding: 6px 9px;
+    background: transparent;
+    color: #f87171;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+    .cancel-button:hover {
+        background: rgba(239, 68, 68, .1);
+    }
+
+    .cancel-button:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
+
+.orders-empty {
+    padding: 20px 16px;
+    color: #667085;
+    font-size: 11px;
+}
