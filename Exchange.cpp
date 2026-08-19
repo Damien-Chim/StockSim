@@ -76,6 +76,7 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 	
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::SELL, quantity, limit_price, Status::OPEN);
+	user_it->second.add_order(order_id);
 	order_map.emplace(order_id, order);
 
 	Stock& stock = stock_it->second;
