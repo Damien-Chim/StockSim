@@ -55,19 +55,7 @@ bool User::buy_stock(const std::string& stock_id, int quantity, int limit_price)
 }
 
 bool User::sell_stock(const std::string& stock_id, int quantity, int limit_price) {
-	if (quantity <= 0 || limit_price <= 0) { return false; }
-	auto available_stock_it = available_stocks.find(stock_id);
-	if (available_stock_it == available_stocks.end()) { return false; }
-	if (quantity > available_stock_it->second) { return false; }
-	std::unordered_map<std::string, int> locked = { {available_stock_it->first, quantity} };
-	add_reserved_stocks(locked);
-	remove_available_stocks(locked);
-	bool success = Exchange::sell_request(user_id, stock_id, quantity, limit_price);
-	if (!success) {
-		remove_reserved_stocks(locked);
-		add_available_stocks(locked);
-	}
-	return success;
+	return Exchange::sell_request(user_id, stock_id, quantity, limit_price);
 }
 
 bool User::cancel_trade(const std::string& order_id) {
