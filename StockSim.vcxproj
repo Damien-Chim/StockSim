@@ -148,6 +148,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BotManager.cpp" />
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Exchange.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BotManager.hpp" />
     <ClInclude Include="Candle.hpp" />
     <ClInclude Include="Client.hpp" />
     <ClInclude Include="Exchange.hpp" />

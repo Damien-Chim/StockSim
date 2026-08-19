@@ -67,8 +67,9 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 	order_map.emplace(order_id, order);
 	
 	Stock& stock = stock_it->second;
-	stock.get_order_book().place_order(order);
-	stock.get_order_book().match_orders();
+	//stock.get_order_book().place_order(order);
+	//stock.get_order_book().match_orders();
+	stock.get_order_book().match_orders(order_id);
 
 	return true;
 }
@@ -98,8 +99,9 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 	order_map.emplace(order_id, order);
 
 	Stock& stock = stock_it->second;
-	stock.get_order_book().place_order(order);
-	stock.get_order_book().match_orders();
+	//stock.get_order_book().place_order(order);
+	//stock.get_order_book().match_orders();
+	stock.get_order_book().match_orders(order_id);
 
 	return true;
 }
