@@ -42,8 +42,23 @@ std::string Exchange::generate_stock_id() {
 	return id;
 }
 
+/*
+	if (quantity <= 0 || limit_price <= 0) { return false; }
+	if (quantity * limit_price > available_cash) { return false; }
+	long long locked = static_cast<long long>(quantity) * static_cast<long long>(limit_price);
+	reserved_cash += locked;
+	available_cash -= locked;
+	bool success = Exchange::buy_request(user_id, stock_id, quantity, limit_price);
+	if (!success) {
+		reserved_cash -= locked;
+		available_cash += locked;
+	}
+	return success;
+*/
+
 bool Exchange::buy_request(const std::string& user_id, const std::string& stock_id, int quantity, int limit_price) {
 	std::lock_guard<std::mutex> lock(exchange_mutex);
+
 	auto user_it = user_map.find(user_id);
 	if (user_it == user_map.end()) { return false; }
 
@@ -51,6 +66,14 @@ bool Exchange::buy_request(const std::string& user_id, const std::string& stock_
 	if (stock_it == stock_map.end()) { return false; }
 
 	if (quantity <= 0 || limit_price <= 0) { return false; }
+
+	long long required_reserved_cash = static_cast<long long>(quantity) * static_cast<long long>(limit_price);
+	if (required_reserved_cash > user_it->second.get_available_cash()) {
+		return false;
+	}
+
+	user_it->second.set_available_cash(user_it->second.get_available_cash() - required_reserved_cash);
+	user_it->second.set_reserved_cash(user_it->second.get_reserved_cash() + required_reserved_cash);
 
 	std::string order_id = generate_order_id();
 	Order order(order_id, user_id, stock_id, Side::BUY, quantity, limit_price, Status::OPEN);
