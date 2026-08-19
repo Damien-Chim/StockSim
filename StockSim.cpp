@@ -9,6 +9,7 @@
 #include "Server.hpp"
 #include "Client.hpp"
 #include "HttpServer.hpp"
+#include "BotManager.hpp"
 
 static void initialise() {
     Exchange::add_stock(Stock("Intel Corporation", "INTC", 103));
@@ -18,6 +19,7 @@ static void initialise() {
     Exchange::add_stock(Stock("McDonald's Corporation", "MCD", 273));
     Exchange::add_stock(Stock("JPMorgan Chase & Co.", "JPM", 363));
     Exchange::add_stock(Stock("Wallmart Inc.", "WMT", 115));
+    Exchange::add_stock(Stock("Boeing", "BOE", 148));
     Exchange::add_user(User("Damien"));
     User* user = Exchange::get_user("USER_0");
     user->deposit_cash(10000);
@@ -32,7 +34,9 @@ static void initialise() {
 
 int main(int argc, char* argv[]) {
     initialise();
-
+    BotManager bots;
+    bots.create_bots(20);
+    bots.start();
     if (argc != 2) {
         std::cout << "Invalid number of parameters" << std::endl; return 1;
     }
