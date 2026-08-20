@@ -118,7 +118,7 @@ bool Exchange::cancel_request(const std::string& user_id, const std::string& ord
 	const Side side = order->get_side();
 	const std::string stock_id = order->get_stock_id();
 	const int remaining_stock_quantity = order->get_quantity();
-	const int remaining_cash = order->get_reserved_cash();
+	const long long remaining_cash = order->get_reserved_cash();
 
 	if (side == Side::BUY) {
 		user->set_available_cash(user->get_available_cash() + remaining_cash);
