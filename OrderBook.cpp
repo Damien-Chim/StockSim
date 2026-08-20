@@ -145,8 +145,6 @@ void OrderBook::match_orders(std::string order_id) {
 
 	else if (order->get_side() == Side::SELL) {
 		Order* sell_order = order;
-
-		// need to repeatedly match it if current order can be matched by multiple orders
 		while (true) {
 			if (sell_order->get_quantity() == 0) {
 				return;
@@ -169,27 +167,22 @@ void OrderBook::match_orders(std::string order_id) {
 				clean_buy_level();
 				continue;
 			}
-
+			
+			std::string stock_id = buy_order->get_stock_id();
 			int execution_price = buy_order->get_limit_price();
 			int traded_quantity = std::min(buy_order->get_quantity(), sell_order->get_quantity());
 			long long reserved_cash_spent = static_cast<long long>(execution_price) * static_cast<long long>(traded_quantity);
 
-			buy_order->set_quantity(buy_order->get_quantity() - traded_quantity);
-			buy_order->set_reserved_cash(buy_order->get_reserved_cash() - reserved_cash_spent);
-			sell_order->set_quantity(sell_order->get_quantity() - traded_quantity);
+			update_orders_after_execution(buy_order, sell_order, execution_price, traded_quantity, reserved_cash_spent);
 
 			User* buyer = Exchange::get_user(buy_order->get_user_id());
-			buyer->set_reserved_cash(buyer->get_reserved_cash() - reserved_cash_spent);  // buyer uses up reserved_cash
-			buyer->add_available_stocks({ {buy_order->get_stock_id(), traded_quantity} });  // in exchange for new stocks
-
 			User* seller = Exchange::get_user(sell_order->get_user_id());
-			seller->remove_reserved_stocks({ {sell_order->get_stock_id(), traded_quantity} });  // seller uses up reserved_stock
-			seller->set_available_cash(seller->get_available_cash() + reserved_cash_spent);    // in exchange for money
+
+			swap_assets(buyer, seller, reserved_cash_spent, traded_quantity, stock_id);
 
 			// buyer order is fulfiled
 			if (buy_order->get_quantity() == 0) {
-				buyer->set_available_cash(buyer->get_available_cash() + buy_order->get_reserved_cash());
-				buyer->set_reserved_cash(buyer->get_reserved_cash() - buy_order->get_reserved_cash());
+				refund_price_improvement(buyer, buy_order);
 				buy_order->set_status(Status::FILLED);
 				buy_order->set_reserved_cash(0);
 				clean_buy_level();
@@ -208,16 +201,7 @@ void OrderBook::match_orders(std::string order_id) {
 				sell_order->set_status(Status::PARTIALLY_FILLED);
 			}
 
-			std::string trade_id = Exchange::generate_trade_id();
-			std::string stock_id = buy_order->get_stock_id();
-			Timestamp executed_timestamp = current_timestamp();
-			Trade trade(trade_id, stock_id, buyer->get_user_id(), seller->get_user_id(), traded_quantity, execution_price, executed_timestamp);
-			Stock* stock = Exchange::get_stock(stock_id);
-			if (stock != nullptr) {
-				stock->add_trade(trade);
-				stock->update_candle(trade);
-				stock->set_market_price(execution_price);
-			}
+			make_trade(stock_id, buyer, seller, traded_quantity, execution_price);
 		}
 	}
 }
