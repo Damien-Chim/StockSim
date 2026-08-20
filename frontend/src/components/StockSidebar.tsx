@@ -24,6 +24,7 @@ export default function StockSidebar({
       <div className="stock-list">
         {stocks.map((stock) => (
           <button
+            type="button"
             key={stock.stock_id}
             className={`stock-row ${selectedId === stock.stock_id ? "selected" : ""}`}
             onClick={() => onSelect(stock)}

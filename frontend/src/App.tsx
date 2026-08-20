@@ -20,7 +20,6 @@ import OrderTicket from "./components/OrderTicket";
 import RecentTrades from "./components/RecentTrades";
 import StockSidebar from "./components/StockSidebar";
 import UserPanel from "./components/UserPanel";
-import CancelOrder from "./components/CancelOrder";
 import MyOrders from "./components/MyOrders";
 
 export default function App() {
@@ -41,8 +40,10 @@ export default function App() {
 
         async function loadInitialData() {
             try {
-                const userData = await getMe();
-                const orderData = await getMyOrders();
+                const [userData, orderData] = await Promise.all([
+                    getMe(),
+                    getMyOrders(),
+                ]);
 
                 if (!cancelled) {
                     setMe(userData);
@@ -50,10 +51,7 @@ export default function App() {
                 }
             }
             catch (e) {
-                console.error(
-                    "Failed to load account data:",
-                    e
-                );
+                console.error("Failed to load account data:", e);
             }
 
             try {
@@ -67,18 +65,6 @@ export default function App() {
 
                 if (stockData.length > 0) {
                     setSelectedId(stockData[0].stock_id);
-                }
-
-                // Account failure shouldn't prevent stocks from loading
-                try {
-                    const userData = await getMe();
-
-                    if (!cancelled) {
-                        setMe(userData);
-                    }
-                }
-                catch (e) {
-                    console.error("Failed to load user:", e);
                 }
             }
             catch (e) {
@@ -264,7 +250,7 @@ export default function App() {
                                     </span>
 
                                     <h2>
-                                        {stock.stock_symbol} price action
+                                        Price Chart
                                     </h2>
                                 </div>
 
@@ -281,14 +267,9 @@ export default function App() {
 
                         <div className="right-column">
                             <OrderTicket
+                                key={stock.stock_id}
                                 stock={stock}
-                                onOrderComplete={
-                                    refreshAfterOrder
-                                }
-                            />
-
-                            <CancelOrder
-                                onCancelComplete={refreshAfterOrder}
+                                onOrderComplete={refreshAfterOrder}
                             />
 
                             <UserPanel
@@ -297,14 +278,14 @@ export default function App() {
                             />
                         </div>
 
-                        <RecentTrades
-                            trades={trades}
-                        />
+                        <div className="bottom-grid">
+                            <RecentTrades trades={trades} />
 
-                        <MyOrders
-                            orders={orders}
-                            onCancelComplete={refreshAfterOrder}
-                        />
+                            <MyOrders
+                                orders={orders}
+                                onCancelComplete={refreshAfterOrder}
+                            />
+                        </div>
 
                     </div>
                 ) : (

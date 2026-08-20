@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { buyStock, sellStock, type StockSummary } from "../api/api";
 
 export default function OrderTicket({
@@ -14,15 +14,10 @@ export default function OrderTicket({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setLimitPrice(String(stock.market_price));
-    setMessage(null);
-    setError(null);
-  }, [stock.stock_id, stock.market_price]);
-
   async function submit() {
     const qty = Number(quantity);
     const price = Number(limitPrice);
+
     setMessage(null);
     setError(null);
 
@@ -40,7 +35,7 @@ export default function OrderTicket({
   }
 
   return (
-    <section className="panel">
+    <section className="panel order-ticket-panel">
       <div className="panel-heading">
         <div>
           <span className="eyebrow">Order ticket</span>
@@ -50,21 +45,49 @@ export default function OrderTicket({
       </div>
 
       <div className="side-switch">
-        <button className={side === "buy" ? "active buy" : ""} onClick={() => setSide("buy")}>Buy</button>
-        <button className={side === "sell" ? "active sell" : ""} onClick={() => setSide("sell")}>Sell</button>
+        <button
+          type="button"
+          className={side === "buy" ? "active buy" : ""}
+          onClick={() => setSide("buy")}
+        >
+          Buy
+        </button>
+        <button
+          type="button"
+          className={side === "sell" ? "active sell" : ""}
+          onClick={() => setSide("sell")}
+        >
+          Sell
+        </button>
       </div>
 
       <label>
         Quantity
-        <input value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+        <input
+          type="number"
+          min="1"
+          step="1"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+        />
       </label>
 
       <label>
         Limit price
-        <input value={limitPrice} onChange={(e) => setLimitPrice(e.target.value)} />
+        <input
+          type="number"
+          min="1"
+          step="1"
+          value={limitPrice}
+          onChange={(e) => setLimitPrice(e.target.value)}
+        />
       </label>
 
-      <button className={`submit-order ${side}`} onClick={submit}>
+      <button
+        type="button"
+        className={`submit-order ${side}`}
+        onClick={() => void submit()}
+      >
         {side === "buy" ? "Buy" : "Sell"} {stock.stock_symbol}
       </button>
 
