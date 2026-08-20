@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <mutex>
+#include <iostream>
 
 int Exchange::next_order_id = 0;
 int Exchange::next_trade_id = 0;
@@ -108,12 +109,48 @@ bool Exchange::sell_request(const std::string& user_id, const std::string& stock
 
 bool Exchange::cancel_request(const std::string& user_id, const std::string& order_id) {
 	std::lock_guard<std::mutex> lock(exchange_mutex);
+	std::cout << "\n--- CANCEL DEBUG ---\n";
+	std::cout << "requested user: " << user_id << '\n';
+	std::cout << "requested order: " << order_id << '\n';
+
 	User* user = get_user(user_id);
-	if (user == nullptr) { return false; }
+
+	if (user == nullptr) {
+		std::cout << "FAILED: user doesn't exist\n";
+		return false;
+	}
+
 	Order* order = get_order(order_id);
-	if (order == nullptr) { return false; }
-	if (order->get_user_id() != user_id) { return false; }
-	if (order->get_status() != Status::OPEN && order->get_status() != Status::PARTIALLY_FILLED) { return false; }
+
+	if (order == nullptr) {
+		std::cout << "FAILED: order doesn't exist\n";
+		return false;
+	}
+
+	std::cout << "actual owner: "
+		<< order->get_user_id() << '\n';
+
+	std::cout << "status: "
+		<< static_cast<int>(order->get_status()) << '\n';
+
+	std::cout << "quantity: "
+		<< order->get_quantity() << '\n';
+
+	if (order->get_user_id() != user_id) {
+		std::cout << "FAILED: wrong owner\n";
+		return false;
+	}
+
+	if (order->get_status() != Status::OPEN &&
+		order->get_status() != Status::PARTIALLY_FILLED) {
+		std::cout << "FAILED: order isn't active\n";
+		std::cout << "status: "
+			<< static_cast<int>(order->get_status())
+			<< '\n';
+		return false;
+	}
+
+	std::cout << "CANCEL ACCEPTED\n";
 	// refund stocks/cash to user
 	const Side side = order->get_side();
 	const std::string stock_id = order->get_stock_id();

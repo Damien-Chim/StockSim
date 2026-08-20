@@ -109,12 +109,19 @@ export default function App() {
 
         async function loadSelectedStock() {
             try {
-                const [basic, candleData, tradeData] =
-                    await Promise.all([
-                        getStockBasicInfo(selectedId!),
-                        getCandles(selectedId!),
-                        getTrades(selectedId!),
-                    ]);
+                const [
+                    basic,
+                    candleData,
+                    tradeData,
+                    userData,
+                    orderData
+                ] = await Promise.all([
+                    getStockBasicInfo(selectedId!),
+                    getCandles(selectedId!),
+                    getTrades(selectedId!),
+                    getMe(),
+                    getMyOrders(),
+                ]);
 
                 if (cancelled) {
                     return;
@@ -123,6 +130,8 @@ export default function App() {
                 setSelectedStock(basic);
                 setCandles(candleData);
                 setTrades(tradeData);
+                setMe(userData);
+                setOrders(orderData);
             }
             catch (e) {
                 if (!cancelled) {

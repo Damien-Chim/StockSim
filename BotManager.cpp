@@ -126,8 +126,8 @@ void BotManager::make_trade(const std::string& bot_id) {
     int market_price =
         stock->get_market_price();
 
-    std::uniform_int_distribution<int> quantity_dist(1, 5);
-    std::uniform_int_distribution<int> offset_dist(-2, 2);
+    std::uniform_int_distribution<int> quantity_dist(1, 20);
+    std::uniform_int_distribution<int> offset_dist(-20, 20);
     std::uniform_int_distribution<int> side_dist(0, 1);
 
     int quantity =
