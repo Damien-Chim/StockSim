@@ -3,7 +3,9 @@
 #include <unordered_map>
 #include <queue>
 #include <string>
-#include "Order.hpp"
+
+class Order;
+class User;
 
 class OrderBook {
 private:
@@ -15,8 +17,13 @@ private:
 	
 	void clean_buy_level();
 	void clean_sell_level();
+	void update_orders_after_execution(Order* buy_order, Order* sell_order, int execution_price, int traded_quantity, long long reserved_cash_spent);
+	void swap_assets(User* buyer, User* seller, long long reserved_cash_spent, int traded_quantity, const std::string& stock_id);
+	void refund_price_improvement(User* buyer, Order* buy_order);
+	void make_trade(const std::string& stock_id, User* buyer, User* seller, int traded_quantity, long long execution_price);
 	
 public:
+
 	void place_order(Order& order);
 	void match_orders();
 	void match_orders(std::string order_id);

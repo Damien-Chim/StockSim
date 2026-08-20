@@ -1,5 +1,4 @@
 #include "Order.hpp"
-#include "User.hpp"
 #include <string>
 Order::Order(std::string order_id, std::string user_id, std::string stock_id, Side side, int quantity, int limit_price, Status status) :
 	order_id{ order_id }, 
