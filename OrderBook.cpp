@@ -8,7 +8,7 @@
 #include <queue>
 #include <algorithm>
 
-void OrderBook::update_orders_after_execution(Order* buy_order, Order* sell_order, int execution_price, int traded_quantity, long long reserved_cash_spent) {
+void OrderBook::update_orders_after_execution(Order* buy_order, Order* sell_order, int traded_quantity, long long reserved_cash_spent) {
 	buy_order->set_quantity(buy_order->get_quantity() - traded_quantity);
 	buy_order->set_reserved_cash(buy_order->get_reserved_cash() - reserved_cash_spent);
 	sell_order->set_quantity(sell_order->get_quantity() - traded_quantity);
@@ -132,7 +132,7 @@ void OrderBook::match_orders(std::string order_id) {
 			int traded_quantity = std::min(buy_order->get_quantity(), sell_order->get_quantity());
 			long long reserved_cash_spent = static_cast<long long>(execution_price) * static_cast<long long>(traded_quantity);
 			
-			update_orders_after_execution(buy_order, sell_order, execution_price, traded_quantity, reserved_cash_spent);
+			update_orders_after_execution(buy_order, sell_order, traded_quantity, reserved_cash_spent);
 
 			User* buyer = Exchange::get_user(buy_order->get_user_id());
 			User* seller = Exchange::get_user(sell_order->get_user_id());
@@ -193,7 +193,7 @@ void OrderBook::match_orders(std::string order_id) {
 			int traded_quantity = std::min(buy_order->get_quantity(), sell_order->get_quantity());
 			long long reserved_cash_spent = static_cast<long long>(execution_price) * static_cast<long long>(traded_quantity);
 
-			update_orders_after_execution(buy_order, sell_order, execution_price, traded_quantity, reserved_cash_spent);
+			update_orders_after_execution(buy_order, sell_order, traded_quantity, reserved_cash_spent);
 
 			User* buyer = Exchange::get_user(buy_order->get_user_id());
 			User* seller = Exchange::get_user(sell_order->get_user_id());

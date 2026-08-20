@@ -17,7 +17,7 @@ private:
 	
 	void clean_buy_level();
 	void clean_sell_level();
-	void update_orders_after_execution(Order* buy_order, Order* sell_order, int execution_price, int traded_quantity, long long reserved_cash_spent);
+	void update_orders_after_execution(Order* buy_order, Order* sell_order, int traded_quantity, long long reserved_cash_spent);
 	void swap_assets(User* buyer, User* seller, long long reserved_cash_spent, int traded_quantity, const std::string& stock_id);
 	void refund_price_improvement(User* buyer, Order* buy_order);
 	void make_trade(const std::string& stock_id, User* buyer, User* seller, int traded_quantity, long long execution_price);
