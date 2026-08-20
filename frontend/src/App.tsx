@@ -110,12 +110,14 @@ export default function App() {
         async function loadSelectedStock() {
             try {
                 const [
+                    stockData,
                     basic,
                     candleData,
                     tradeData,
                     userData,
                     orderData
                 ] = await Promise.all([
+                    getStocks(),
                     getStockBasicInfo(selectedId!),
                     getCandles(selectedId!),
                     getTrades(selectedId!),
@@ -127,6 +129,7 @@ export default function App() {
                     return;
                 }
 
+                setStocks(stockData);
                 setSelectedStock(basic);
                 setCandles(candleData);
                 setTrades(tradeData);
