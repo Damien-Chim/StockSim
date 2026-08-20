@@ -58,6 +58,16 @@ void OrderBook::clean_buy_level() {
 		if (buy_orders.empty()) { return; }
 		const std::string order_id = buy_orders.begin()->second.front();
 		const Order* order = Exchange::get_order(order_id);
+		if (order == nullptr) {
+			buy_orders.begin()->second.pop();
+
+			if (buy_orders.begin()->second.empty()) {
+				buy_orders.erase(buy_orders.begin());
+			}
+
+			continue;
+		}
+
 		const Status order_status = order->get_status();
 		if (order_status == Status::OPEN || order_status == Status::PARTIALLY_FILLED) { return; }
 		buy_orders.begin()->second.pop();
@@ -70,6 +80,16 @@ void OrderBook::clean_sell_level() {
 		if (sell_orders.empty()) { return; }
 		const std::string order_id = sell_orders.begin()->second.front();
 		const Order* order = Exchange::get_order(order_id);
+		if (order == nullptr) {
+			sell_orders.begin()->second.pop();
+
+			if (sell_orders.begin()->second.empty()) {
+				sell_orders.erase(sell_orders.begin());
+			}
+
+			continue;
+		}
+
 		const Status order_status = order->get_status();
 		if (order_status == Status::OPEN || order_status == Status::PARTIALLY_FILLED) { return; }
 		sell_orders.begin()->second.pop();
