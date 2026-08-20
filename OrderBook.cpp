@@ -7,6 +7,7 @@
 #include "Stock.hpp"
 #include <queue>
 #include <algorithm>
+#include <optional>
 
 void OrderBook::update_orders_after_execution(Order* buy_order, Order* sell_order, int traded_quantity, long long reserved_cash_spent) {
 	buy_order->set_quantity(buy_order->get_quantity() - traded_quantity);
@@ -224,6 +225,24 @@ void OrderBook::match_orders(std::string order_id) {
 			make_trade(stock_id, buyer, seller, traded_quantity, execution_price);
 		}
 	}
+}
+
+std::optional<int> OrderBook::get_best_bid() {
+	clean_buy_level();
+	if (buy_orders.empty()) {
+		return std::nullopt;
+	}
+	
+	return buy_orders.begin()->first;
+}
+
+std::optional<int> OrderBook::get_best_ask() {
+	clean_sell_level();
+	if (sell_orders.empty()) {
+		return std::nullopt;
+	}
+
+	return sell_orders.begin()->first;
 }
 
 //void OrderBook::match_orders() {

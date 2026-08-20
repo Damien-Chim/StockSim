@@ -5,6 +5,8 @@ export type StockSummary = {
   stock_name: string;
   stock_symbol: string;
   market_price: number;
+  best_bid?: number | null;
+  best_ask?: number | null;
 };
 
 export type Candle = {

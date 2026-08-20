@@ -226,11 +226,16 @@ private:
                 return;
             }
 
+            auto best_bid = stock->get_order_book().get_best_bid();
+            auto best_ask = stock->get_order_book().get_best_ask();
+
             json basic_info = {
                 {"stock_id", stock->get_stock_id()},
                 {"stock_name", stock->get_stock_name()},
                 {"stock_symbol", stock->get_stock_symbol()},
-                {"market_price", stock->get_market_price()}
+                {"market_price", stock->get_market_price()},
+                {"best_bid", best_bid.has_value() ? json(*best_bid) : json(nullptr)},
+                {"best_ask", best_ask.has_value() ? json(*best_ask) : json(nullptr)}
             };
 
             send_json_response(http::status::ok, basic_info);

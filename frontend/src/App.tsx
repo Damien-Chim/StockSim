@@ -207,10 +207,7 @@ export default function App() {
             <main className="main">
                 <header className="topbar">
                     <div>
-                        <span className="eyebrow">
-                            Live simulated market
-                        </span>
-
+                        <span className="eyebrow">Live simulated market</span>
                         <h1>
                             {stock
                                 ? `${stock.stock_symbol} · ${stock.stock_name}`
@@ -219,11 +216,25 @@ export default function App() {
                     </div>
 
                     {stock && (
-                        <div className="market-price">
-                            <span>Last price</span>
-                            <strong>
-                                ${stock.market_price}
-                            </strong>
+                        <div className="market-summary">
+                            <div>
+                                <span>Bid</span>
+                                <strong>
+                                    {stock.best_bid != null ? `$${stock.best_bid}` : "—"}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>Ask</span>
+                                <strong>
+                                    {stock.best_ask != null ? `$${stock.best_ask}` : "—"}
+                                </strong>
+                            </div>
+
+                            <div className="last-price">
+                                <span>Last</span>
+                                <strong>${stock.market_price}</strong>
+                            </div>
                         </div>
                     )}
                 </header>

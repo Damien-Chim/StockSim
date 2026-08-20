@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <queue>
 #include <string>
+#include <optional>
 
 class Order;
 class User;
@@ -23,7 +24,8 @@ private:
 	void make_trade(const std::string& stock_id, User* buyer, User* seller, int traded_quantity, long long execution_price);
 	
 public:
-
+	std::optional<int> get_best_bid();
+	std::optional<int> get_best_ask();
 	void place_order(Order& order);
 	// void match_orders();
 	void match_orders(std::string order_id);

@@ -114,17 +114,28 @@ body {
         margin: 5px 0 0
     }
 
-.market-price {
-    text-align: right
+.market-summary {
+    display: flex;
+    gap: 22px;
+    align-items: flex-end;
+    text-align: right;
 }
 
-    .market-price span {
+    .market-summary span {
         display: block;
+        margin-bottom: 3px;
         color: #667085;
-        font-size: 10px
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .1em;
     }
 
-    .market-price strong {
+    .market-summary strong {
+        font-size: 17px;
+    }
+
+    .market-summary .last-price strong {
         font-size: 30px;
     }
 
@@ -614,7 +625,7 @@ input {
         align-items: flex-start;
     }
 
-    .market-price strong {
+    .market-summary .last-price strong {
         font-size: 24px;
     }
 
