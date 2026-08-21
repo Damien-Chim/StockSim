@@ -1,0 +1,12 @@
+build/
+.vs/
+.git/
+frontend/
+x64/
+Debug/
+Release/
+*.sln
+*.slnx
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user

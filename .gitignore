@@ -11,3 +11,4 @@ Release/
 *.log
 
 vcpkg_installed/
+build/

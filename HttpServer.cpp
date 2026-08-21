@@ -29,6 +29,7 @@
 #include "Stock.hpp"
 #include "Exchange.hpp"
 #include "Trade.hpp"
+#include <cstdlib>
 
 namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
@@ -112,9 +113,12 @@ private:
             "application/json"
         );
 
+        const char* cors_env = std::getenv("CORS_ORIGIN");
+        std::string cors_origin = cors_env ? cors_env : "http://localhost:5173";
+
         response_.set(
             http::field::access_control_allow_origin,
-            "http://localhost:5173"
+            cors_origin
         );
 
         response_.set(
@@ -454,11 +458,14 @@ private:
             break;
 
         case http::verb::options:
+        {
             response_.result(http::status::no_content);
+            const char* cors_env = std::getenv("CORS_ORIGIN");
+            std::string cors_origin = cors_env ? cors_env : "http://localhost:5173";
 
             response_.set(
                 http::field::access_control_allow_origin,
-                "http://localhost:5173"
+                cors_origin
             );
 
             response_.set(
@@ -472,6 +479,7 @@ private:
             );
 
             break;
+        }
 
         default:
             // We return responses indicating an error if
@@ -569,9 +577,10 @@ void run_http_server()
     try
     {
         auto const address =
-            boost::asio::ip::make_address("127.0.0.1");
+            boost::asio::ip::make_address("0.0.0.0");
 
-        unsigned short port = 8080;
+        const char* port_env = std::getenv("PORT");
+        unsigned short port = port_env ? static_cast<unsigned short>(std::stoi(port_env)) : 8080;
 
         boost::asio::io_context ioc{ 1 };
 
@@ -580,7 +589,7 @@ void run_http_server()
 
         http_server(acceptor, socket);
 
-        std::cout << "HTTP server running on port 8080\n";
+        std::cout << "HTTP server running on port " << port << std::endl;
 
         ioc.run();
     }
