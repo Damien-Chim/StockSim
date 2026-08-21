@@ -1,5 +1,7 @@
 # StockSim
 
+Link: https://stock-sim-self-five.vercel.app/
+
 StockSim is a full-stack stock exchange simulator built around a C++ matching engine. It simulates a simple electronic market in which users and automated trading bots can place limit buy and sell orders, with trades executed using price-time priority.
 
 The project includes a C++ backend, HTTP API, React frontend, automated market participants, candlestick data, portfolio tracking, and a web deployment using Docker, Render, and Vercel.
