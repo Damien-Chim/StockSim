@@ -8,6 +8,7 @@ import {
     getStockBasicInfo,
     getStocks,
     getTrades,
+    resetSimulation,
     type Candle,
     type Me,
     type OrderInfo,
@@ -185,6 +186,20 @@ export default function App() {
         }
     }
 
+    async function handleResetSimulation() {
+        try {
+            await resetSimulation();
+            await refreshAfterOrder();
+        }
+        catch (e) {
+            setError(
+                e instanceof Error
+                    ? e.message
+                    : "Failed to reset simulation"
+            );
+        }
+    }
+
     const selectedFromList =
         stocks.find(
             (stock) => stock.stock_id === selectedId
@@ -215,28 +230,42 @@ export default function App() {
                         </h1>
                     </div>
 
-                    {stock && (
-                        <div className="market-summary">
-                            <div>
-                                <span>Bid</span>
-                                <strong>
-                                    {stock.best_bid != null ? `$${stock.best_bid}` : "—"}
-                                </strong>
-                            </div>
+                    <div className="topbar-actions">
+                        {stock && (
+                            <div className="market-summary">
+                                <div>
+                                    <span>Bid</span>
+                                    <strong>
+                                        {stock.best_bid != null
+                                            ? `$${stock.best_bid}`
+                                            : "—"}
+                                    </strong>
+                                </div>
 
-                            <div>
-                                <span>Ask</span>
-                                <strong>
-                                    {stock.best_ask != null ? `$${stock.best_ask}` : "—"}
-                                </strong>
-                            </div>
+                                <div>
+                                    <span>Ask</span>
+                                    <strong>
+                                        {stock.best_ask != null
+                                            ? `$${stock.best_ask}`
+                                            : "—"}
+                                    </strong>
+                                </div>
 
-                            <div className="last-price">
-                                <span>Last</span>
-                                <strong>${stock.market_price}</strong>
+                                <div className="last-price">
+                                    <span>Last</span>
+                                    <strong>${stock.market_price}</strong>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        <button
+                            type="button"
+                            className="reset-simulation"
+                            onClick={() => void handleResetSimulation()}
+                        >
+                            Reset Simulation
+                        </button>
+                    </div>
                 </header>
 
                 {error && (

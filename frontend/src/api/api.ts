@@ -104,3 +104,9 @@ export type OrderInfo = {
 export function getMyOrders() {
     return request<OrderInfo[]>("/api/me/orders");
 }
+
+export function resetSimulation() {
+    return request<{ message: string }>("/api/reset", {
+        method: "POST",
+    });
+}

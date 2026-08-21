@@ -174,6 +174,7 @@
     <ClInclude Include="HttpServer.hpp" />
     <ClInclude Include="OrderBook.hpp" />
     <ClInclude Include="Server.hpp" />
+    <ClInclude Include="Simulation.hpp" />
     <ClInclude Include="Stock.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Trade.hpp" />

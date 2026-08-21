@@ -224,3 +224,16 @@ Stock* Exchange::get_stock(const std::string& stock_id) {
 std::unordered_map<std::string, Stock> Exchange::get_stocks() {
 	return stock_map;
 }
+
+void Exchange::reset() {
+	std::lock_guard<std::mutex> lock(exchange_mutex);
+
+	order_map.clear();
+	user_map.clear();
+	stock_map.clear();
+
+	next_order_id = 0;
+	next_trade_id = 0;
+	next_user_id = 0;
+	next_stock_id = 0;
+}

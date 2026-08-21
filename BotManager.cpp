@@ -12,6 +12,7 @@
 
 
 void BotManager::create_bots(int count) {
+    bot_ids.clear();
     for (int i = 0; i < count; ++i) {
         User bot("BOT_" + std::to_string(i));
 

@@ -30,6 +30,7 @@
 #include "Exchange.hpp"
 #include "Trade.hpp"
 #include <cstdlib>
+#include "Simulation.hpp"
 
 namespace ip = boost::asio::ip;         // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio.hpp>
@@ -515,6 +516,15 @@ private:
 
         else if (target.starts_with("/api/orders")) {
             handle_orders_request(target);
+        }
+
+        else if (target == "/api/reset") {
+            reset_simulation();
+
+            send_json_response(
+                http::status::ok,
+                { {"message", "Simulation reset successfully"} }
+            );
         }
 
         else {

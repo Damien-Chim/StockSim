@@ -37,4 +37,5 @@ public:
 	// static Trade* get_trade(const std::string& trade_id);
 	static Stock* get_stock(const std::string& stock_id);
 	static std::unordered_map<std::string, Stock> get_stocks();
+	static void reset();
 };

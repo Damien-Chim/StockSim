@@ -10,7 +10,9 @@
 #include "Client.hpp"
 #include "HttpServer.hpp"
 #include "BotManager.hpp"
+#include "Simulation.hpp"
 
+BotManager bots;
 static void initialise() {
     Exchange::add_stock(Stock("Intel Corporation", "INTC", 103));
     Exchange::add_stock(Stock("NVIDIA Corporation", "NVDA", 225));
@@ -32,9 +34,20 @@ static void initialise() {
     );
 }
 
+void reset_simulation() {
+    bots.stop();
+
+    Exchange::reset();
+
+    initialise();
+
+    bots.create_bots(20);
+    bots.start();
+}
+
 int main(int argc, char* argv[]) {
     initialise();
-    BotManager bots;
+
     bots.create_bots(20);
     bots.start();
     if (argc != 2) {
