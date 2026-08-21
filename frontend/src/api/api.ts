@@ -1,5 +1,5 @@
 const API_BASE = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8080";
-
+console.log("API_BASE:", API_BASE);
 export type StockSummary = {
   stock_id: string;
   stock_name: string;
